@@ -1,0 +1,9 @@
+.next
+out
+node_modules
+package-lock.json
+public/sounds
+test-results
+playwright-report
+data/sounds/inventory.json
+.claude
