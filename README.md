@@ -4,7 +4,7 @@
 
 FidgetBeatz is a mobile-first, browser-based beat-making playground. Tap colorful sound pads, mix overlapping sounds, switch between curated presets, and save up to five personal soundboards — no account, no install, no musical experience required.
 
-> **Project status:** Phase 1 implemented (v0.1.0, 2026-10-18). Every script in the table below has been run. Still open: real-device audio testing (iOS Safari / Android Chrome), the first deployment (Vercel for the app, a Cloudflare Worker for stats; steps in [docs/deployment.md](docs/deployment.md)), and the Figma pass — see [docs/roadmap.md](docs/roadmap.md).
+> **Project status:** Phase 1 implemented (v0.1.0, 2026-10-18). Every script in the table below has been run. Still open: real-device audio testing (iOS Safari / Android Chrome), deploying the stats Worker (the app is live at https://fidgetbeatz.com; steps in [docs/deployment.md](docs/deployment.md)), and the Figma pass — see [docs/roadmap.md](docs/roadmap.md).
 
 ---
 
@@ -78,10 +78,10 @@ npm run dev                  # http://localhost:3000
 
 ## Environment variables
 
-| Variable                                             | Required | Purpose                                                                                                                                                                                                                          |
-| ---------------------------------------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `NEXT_PUBLIC_STATS_URL`                              | No       | Visitor counter endpoint (ADR 0006), e.g. the deployed `https://fidgetbeatz-stats.<subdomain>.workers.dev` or `http://localhost:8787` for the local counter. Empty = the footer shows the offline state. Baked in at build time. |
-| `NEXT_PUBLIC_APP_VERSION` / `NEXT_PUBLIC_APP_COMMIT` | No       | Set automatically at build; override only for testing.                                                                                                                                                                           |
+| Variable                                             | Required | Purpose                                                                                                                                                                                              |
+| ---------------------------------------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_STATS_URL`                              | No       | Visitor counter endpoint (ADR 0006), production: `https://stats.fidgetbeatz.com`; `http://localhost:8787` for the local counter. Empty = the footer shows the offline state. Baked in at build time. |
+| `NEXT_PUBLIC_APP_VERSION` / `NEXT_PUBLIC_APP_COMMIT` | No       | Set automatically at build; override only for testing.                                                                                                                                               |
 
 **Never** put a secret in a `NEXT_PUBLIC_*` variable — those are shipped to the browser.
 
@@ -89,11 +89,11 @@ npm run dev                  # http://localhost:3000
 
 Phase 1 has no server-side code, so the app stays **statically exportable** (`output: 'export'`) and deployable to any static host ([ADR 0002](docs/decisions/0002-no-backend-in-phase-1.md)).
 
-- **Hosting:** the app goes on **Vercel** (production from `main`, a preview per PR) and the visitor counter on a **Cloudflare Worker** ([ADR 0009](docs/decisions/0009-hosting-vercel-and-cloudflare.md)). **Neither is deployed yet.** The first-time setup, in order, is in [docs/deployment.md](docs/deployment.md).
+- **Hosting:** the app is live on **Vercel** at **https://fidgetbeatz.com** (production from `main`, a preview per PR). The visitor counter goes on a **Cloudflare Worker** ([ADR 0009](docs/decisions/0009-hosting-vercel-and-cloudflare.md)) and **isn't deployed yet**. The first-time setup, in order, is in [docs/deployment.md](docs/deployment.md).
 - **CI:** GitHub Actions ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs lint, format check, typecheck, unit tests, the stats service tests, the build and E2E on every PR and push to `main`. Dependabot opens weekly update PRs.
 - **Node:** 24, from `.nvmrc` (`engines` allows 24 or later).
 - **Vercel Hobby** is free but limited to **non-commercial personal use**; any monetization requires a paid plan or another host.
-- A custom domain is optional and is the only expected cost.
+- **Domain:** `fidgetbeatz.com` (DNS on Cloudflare); `www` redirects to it. The stats Worker will be at `stats.fidgetbeatz.com`.
 
 ## Documentation
 

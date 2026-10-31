@@ -5,11 +5,14 @@
   "name": "fidgetbeatz-stats",
   "main": "src/index.ts",
   "compatibility_date": "2026-10-01",
-  "workers_dev": true,
-  // Comma-separated exact origins allowed to call the service. Set the production origin here
-  // (or override with `wrangler deploy --var ALLOWED_ORIGINS:...`) before deploying.
+  // Served only at stats.fidgetbeatz.com. The domain's DNS is on Cloudflare, so deploying creates
+  // the DNS record and certificate; no workers.dev URL, so there is one public endpoint.
+  "workers_dev": false,
+  "routes": [{ "pattern": "stats.fidgetbeatz.com", "custom_domain": true }],
+  // Comma-separated exact origins allowed to call the service: the production site and its www
+  // redirect. `npm run dev` swaps in http://localhost:3000, so local runs never count here.
   "vars": {
-    "ALLOWED_ORIGINS": "http://localhost:3000",
+    "ALLOWED_ORIGINS": "https://fidgetbeatz.com,https://www.fidgetbeatz.com",
   },
   "durable_objects": {
     "bindings": [{ "name": "STATS_COUNTER", "class_name": "StatsCounter" }],

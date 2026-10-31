@@ -5,7 +5,7 @@
   "description": "Visitor counter for FidgetBeatz: a Cloudflare Worker + Durable Object (ADR 0006).",
   "type": "module",
   "scripts": {
-    "dev": "wrangler dev",
+    "dev": "wrangler dev --var ALLOWED_ORIGINS:http://localhost:3000",
     "deploy": "wrangler deploy",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"

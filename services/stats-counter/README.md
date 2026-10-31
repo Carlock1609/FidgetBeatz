@@ -34,32 +34,31 @@ npm run dev         # local Worker + Durable Object on http://localhost:8787, no
 
 From the repo root, `npm run test:stats` runs the same unit tests (after `npm install` here).
 
-To point the app at the local counter, run the app with `NEXT_PUBLIC_STATS_URL=http://localhost:8787 npm run dev`. `http://localhost:3000` is already in `ALLOWED_ORIGINS`.
+To point the app at the local counter, run the app with `NEXT_PUBLIC_STATS_URL=http://localhost:8787 npm run dev`. `npm run dev` here overrides `ALLOWED_ORIGINS` with `http://localhost:3000`, so the local app is allowed while the production list in `wrangler.jsonc` stays production-only.
 
 ## Deploy
 
-You need a free Cloudflare account. Deploying publishes a public endpoint.
+You need the Cloudflare account that holds the `fidgetbeatz.com` DNS. Deploying publishes a public endpoint at `https://stats.fidgetbeatz.com`.
 
-1. Set `ALLOWED_ORIGINS` in `wrangler.jsonc` to the app's production origin, comma-separated, with no trailing slash, for example `"https://fidgetbeatz.example,http://localhost:3000"`. Remove `localhost` if you don't want local dev builds counting against production.
+1. Check `wrangler.jsonc`. It has the `stats.fidgetbeatz.com` custom domain route (`workers_dev` is off, so there's no `workers.dev` URL) and `ALLOWED_ORIGINS` set to `https://fidgetbeatz.com,https://www.fidgetbeatz.com`: comma-separated exact origins, no trailing slash. Don't create the `stats` DNS record by hand; the deploy creates it and its certificate.
 2. Log in and deploy:
 
    ```bash
    cd services/stats-counter
+   npm install
    npx wrangler login
    npm run deploy
    ```
 
-   Wrangler prints the URL, e.g. `https://fidgetbeatz-stats.<your-subdomain>.workers.dev`.
-
-3. Smoke-test it, using your origin and URL:
+3. Smoke-test it:
 
    ```bash
-   curl -s -X POST -H "Origin: https://fidgetbeatz.example" -H "content-type: application/json" -d '{"tab":"11111111-aaaa-4aaa-8aaa-aaaaaaaaaaaa"}' https://fidgetbeatz-stats.<your-subdomain>.workers.dev/heartbeat
+   curl -s -X POST -H "Origin: https://fidgetbeatz.com" -H "content-type: application/json" -d '{"tab":"11111111-aaaa-4aaa-8aaa-aaaaaaaaaaaa"}' https://stats.fidgetbeatz.com/heartbeat
    ```
 
-   It should print `{"now":1,"visits":0}`.
+   It should print `{"now":1,"visits":0}`. A new certificate can take a few minutes; retry an SSL error after a short wait. `{"error":"origin not allowed"}` means the `Origin` doesn't exactly match `ALLOWED_ORIGINS`.
 
-4. Set `NEXT_PUBLIC_STATS_URL` to that URL in the static host's build environment (or `.env.local`), then rebuild the app. The value is baked in at build time.
+4. Set `NEXT_PUBLIC_STATS_URL=https://stats.fidgetbeatz.com` in Vercel's **Production** environment variables, then redeploy the app. The value is baked in at build time.
 
 ## Free-tier budget
 
