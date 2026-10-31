@@ -10,6 +10,8 @@
 4. Run `npm run check` (lint + typecheck + unit tests). Run `npm run test:e2e` for user-flow changes and `npm run build` before closing a stage.
 5. Commit with a clear message (Conventional Commits recommended: `feat:`, `fix:`, `docs:`, `test:`, `refactor:`, `chore:`).
 
+CI (`.github/workflows/ci.yml`) runs the same checks plus the build and E2E on every PR; see [deployment.md](deployment.md). It doesn't replace running them locally.
+
 A change is **not done** until it is verified by a command you actually ran or by a manual check you actually performed (and recorded).
 
 ## 2. TypeScript
@@ -57,12 +59,12 @@ A change is **not done** until it is verified by a command you actually ran or b
 
 ## 7. Testing
 
-| Layer      | Tool                                             | Covers                                                                                                             |
-| ---------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
-| Unit       | Vitest                                           | reducer actions, storage validation & migration, preset integrity, audio engine logic with a mocked `AudioContext` |
-| Component  | React Testing Library                            | pad triggers call engine, edit mode add/remove/move, sound picker, profile switcher                                |
-| End-to-end | Playwright (Chromium + WebKit, mobile viewports) | play flow, edit & save, preset switch, profile persistence across reload, corrupted storage recovery               |
-| Manual     | Real devices                                     | audio latency & unlock on iOS Safari and Android Chrome                                                            |
+| Layer      | Tool                                             | Covers                                                                                                                                                                         |
+| ---------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Unit       | Vitest                                           | reducer actions, storage validation & migration, preset integrity, audio engine logic with a mocked `AudioContext`                                                             |
+| Component  | React Testing Library                            | pad triggers call engine, edit mode add/remove/move, sound picker, profile switcher                                                                                            |
+| End-to-end | Playwright (Chromium + WebKit, mobile viewports) | play flow, edit & save, preset switch, profile persistence across reload, corrupted storage recovery; axe scans of every view and overlay, keyboard-only flows, reduced motion |
+| Manual     | Real devices                                     | audio latency & unlock on iOS Safari and Android Chrome                                                                                                                        |
 
 Required test cases (Phase 1): sound assignment; playback initiation; rapid repeated taps; overlapping playback; add/remove pads; reorder (drag + keyboard/move buttons); save & restore profiles; switch presets; invalid stored data; unavailable sound; edit mode enter/save/cancel; responsive layout on a phone viewport.
 

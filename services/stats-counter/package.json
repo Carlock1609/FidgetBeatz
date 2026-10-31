@@ -1,0 +1,19 @@
+{
+  "name": "fidgetbeatz-stats-counter",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Visitor counter for FidgetBeatz: a Cloudflare Worker + Durable Object (ADR 0006).",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261019.1",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.5",
+    "wrangler": "^4.151.2"
+  }
+}

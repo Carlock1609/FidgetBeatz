@@ -22,6 +22,7 @@ FidgetBeatz is a **glowing instrument in a dark room**. The pads are the hero; e
 | `--border`                                 | `#2A2A3D`                            | Hairlines                                    |
 | `--text` / `--text-muted`                  | `#F4F4F8` / `#9A9AB3`                | Text                                         |
 | `--accent`                                 | per preset (Classic Drums `#FF8A1F`) | Active chip, Save, wordmark, background glow |
+| `accent-text` (Tailwind color)             | `--accent` mixed 15% toward white    | Accent-colored text (wordmark, Edit badge)   |
 | `--lcd-bg` / `--lcd-border` / `--lcd-text` | `#0F1411` / `#1E2A22` / `#9CFFB0`    | Sound display                                |
 | `--focus`                                  | `#FFFFFF`                            | 2 px focus ring, 2 px offset                 |
 
@@ -65,16 +66,16 @@ FidgetBeatz is a **glowing instrument in a dark room**. The pads are the hero; e
 
 ## 4. Pad states
 
-| State                | Visual                                                                     |
-| -------------------- | -------------------------------------------------------------------------- |
-| Rest                 | Color 15% over `#12121C`, border 38%, label in pad color, soft drop shadow |
-| Hover (fine pointer) | Slightly brighter face                                                     |
-| Focus-visible        | 2 px white ring                                                            |
-| Hit                  | Full color fill, dark label, white LED, 36 px glow, scale 0.96             |
-| Selected (edit)      | Dashed 2 px white outline, lifted 3 px                                     |
-| Dragging             | Scale 1.05, deep shadow                                                    |
-| Missing sound        | Desaturated, striped overlay, warning icon, "Missing sound"                |
-| Empty                | Dashed border, + icon                                                      |
+| State                | Visual                                                                                             |
+| -------------------- | -------------------------------------------------------------------------------------------------- |
+| Rest                 | Color 15% over `#12121C`, border 38%, label in pad color lifted 15% toward white, soft drop shadow |
+| Hover (fine pointer) | Slightly brighter face                                                                             |
+| Focus-visible        | 2 px white ring                                                                                    |
+| Hit                  | Full color fill, dark label, white LED, 36 px glow, scale 0.96                                     |
+| Selected (edit)      | Dashed 2 px white outline, lifted 3 px                                                             |
+| Dragging             | Scale 1.05, deep shadow                                                                            |
+| Missing sound        | Desaturated, striped overlay, warning icon, "Missing sound"                                        |
+| Empty                | Dashed border, + icon                                                                              |
 
 The hit flash is driven by a ref and CSS (data attribute), **not** React state.
 
@@ -103,7 +104,16 @@ The hit flash is driven by a ref and CSS (data attribute), **not** React state.
 | Focus mode enter/exit | 200 ms (fade chrome out, grid expands via layout animation) |
 | Sheets/dialogs        | ~150 ms                                                     |
 
-**Reduced motion:** no scale, stagger or slide; keep a brief brightness flash on hit and the meter (functional feedback).
+**Reduced motion:** no scale, stagger or slide; keep a brief brightness flash on hit and the meter (functional feedback). The play grid's entrance fades only (no scale) under reduced motion.
+
+### Contrast (Stage 7 accessibility pass)
+
+Accessibility wins over the baseline, so these deviate from the original values:
+
+- Pad labels and desktop key hints use the pad color mixed 15% toward white (pure blue `#4D7CFF` and violet `#A259FF` were 4.1–4.3:1 on the pad face). Key hints are full strength, not 50% opacity; the missing pad's small label is full strength, not 70%. Lowest now: violet 5.2:1 at rest, 4.8:1 on hover.
+- Accent-colored text uses `text-accent-text`; the danger button's label is magenta mixed 20% toward white (was 4.2:1).
+- The background accent glow is 14% (was 22%), so muted text in the top bar stays ≥ 5.3:1 on yellow and lime boards.
+- `--text-muted` is unchanged: 7.1:1 on `--bg`, 6.6:1 on `--surface-1`, 6.0:1 on `--surface-2`.
 
 ## 8. Don'ts
 

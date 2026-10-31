@@ -17,7 +17,7 @@ export const buttonVariants = cva(
         ghost: "text-muted hover:bg-surface-2 hover:text-text",
         outline: "border border-border text-text hover:bg-surface-2",
         danger:
-          "bg-[color-mix(in_oklab,var(--pad-magenta)_18%,var(--surface-2))] text-[var(--pad-magenta)] hover:brightness-125",
+          "bg-[color-mix(in_oklab,var(--pad-magenta)_18%,var(--surface-2))] text-[color-mix(in_oklab,var(--pad-magenta)_80%,white)] hover:brightness-125",
       },
       size: {
         default: "h-11 px-4 text-sm",

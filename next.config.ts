@@ -2,8 +2,13 @@ import { execSync } from "node:child_process";
 import type { NextConfig } from "next";
 import pkg from "./package.json";
 
-/** Short git commit for the version sheet; empty when git is unavailable (e.g. a tarball build). */
+/**
+ * Short git commit for the version sheet. Prefers the commit Vercel reports for the build, then
+ * local git; empty when neither is available (e.g. a tarball build).
+ */
 function readCommit(): string {
+  const vercelSha = process.env.VERCEL_GIT_COMMIT_SHA;
+  if (vercelSha) return vercelSha.slice(0, 7);
   try {
     return execSync("git rev-parse --short HEAD", { stdio: ["ignore", "pipe", "ignore"] })
       .toString()

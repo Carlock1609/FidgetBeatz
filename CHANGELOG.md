@@ -12,4 +12,5 @@ All notable changes are listed here, newest first. The version sheet in the app 
 - Green LCD sound display with a live level meter.
 - Focus mode: just the pads, fullscreen where the browser allows it.
 - Keyboard play on desktop (1–0, Q–P, A–F).
+- Accessibility pass: stronger text contrast, keyboard pad moves (M + arrows), focus that returns where you were after dialogs, and no zooming pads with reduced motion.
 - Footer with visitor stats (offline until a counter service is configured) and this version sheet.

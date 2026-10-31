@@ -56,6 +56,8 @@ data/
 types/                  shared domain types (Sound, Pad, Preset, Profile)
 public/sounds/<category>/<sound-id>.wav
 tests/                  e2e (Playwright); unit tests live beside source as *.test.ts(x)
+services/
+  stats-counter/        Visitor counter: Cloudflare Worker + Durable Object, own package.json (ADR 0006); not part of the app build
 docs/                   this documentation
 ```
 
@@ -101,7 +103,7 @@ pointerdown on <Pad>
 
 ### Stats and version
 
-`lib/stats` starts after hydration: it sends one visit increment per page load, a heartbeat every ~30 s while visible, and polls counts every ~30 s. Failures switch the footer to offline. The version is a build-time constant (`NEXT_PUBLIC_APP_VERSION`).
+`lib/stats` starts after hydration: it sends one visit increment per page load, then a heartbeat every ~30 s while visible; each response carries the current counts, so there is no separate poll. Failures switch the footer to offline. The counter itself lives in `services/stats-counter/` (a Cloudflare Worker, deployed separately). The version is a build-time constant (`NEXT_PUBLIC_APP_VERSION`).
 
 The hot path deliberately bypasses React state. Re-rendering on every tap would add latency and jank under rapid input. See `docs/audio-system.md`.
 
@@ -172,5 +174,5 @@ Where the build differs from, or adds detail to, the plan above:
 - **Board state** also holds `settings` (volume, focus mode, focus level line) and `storageNotice`, a one-time, non-blocking message about storage problems. The provider debounces saves by 300 ms and **flushes on `pagehide` / tab hidden**, so a reload right after a change doesn't lose it.
 - **Hydration.** The reducer is seeded with default state for the server render. The grid and profile switcher show a skeleton until `hydrated` is true. Pad and profile ids are random, but they are never rendered as text, so the SSR markup matches.
 - **Audio pre-decoding.** `AudioEngine` decodes with a 1-frame `OfflineAudioContext` before any user gesture. The first tap only has to create and resume the real context. See `docs/audio-system.md` §3.
-- **Version info.** `next.config.ts` injects `NEXT_PUBLIC_APP_VERSION`, `NEXT_PUBLIC_APP_COMMIT` and `NEXT_PUBLIC_BUILD_DATE`. `app/page.tsx` (a Server Component, run at build time) reads `CHANGELOG.md` and passes "What's new" into the client app.
+- **Version info.** `next.config.ts` injects `NEXT_PUBLIC_APP_VERSION`, `NEXT_PUBLIC_APP_COMMIT` (from `VERCEL_GIT_COMMIT_SHA` on Vercel, otherwise local git) and `NEXT_PUBLIC_BUILD_DATE`. `app/page.tsx` (a Server Component, run at build time) reads `CHANGELOG.md` and passes "What's new" into the client app.
 - **UI primitives** in `components/ui/` wrap the unified `radix-ui` package (Dialog, DropdownMenu, Slider, Slot) in the shadcn pattern: code copied in and restyled, with no CLI or generated theme.

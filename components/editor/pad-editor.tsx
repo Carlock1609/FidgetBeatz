@@ -33,13 +33,26 @@ export function PadEditor() {
 
   const close = () => dispatch({ type: "selectPad", padId: null });
 
+  // Back to the pad being edited; if it was removed, to whatever now sits in its place.
+  const returnFocus = () => {
+    if (!pad) return null;
+    const byId = document.querySelector<HTMLElement>(`[data-pad-id="${CSS.escape(pad.id)}"]`);
+    if (byId) return byId;
+    const all = document.querySelectorAll<HTMLElement>("[data-pad-id]");
+    return all[Math.min(index, all.length - 1)] ?? null;
+  };
+
   return (
     <Dialog
       open={state.mode === "edit" && pad !== undefined}
       onOpenChange={(open) => !open && close()}
     >
       {pad && (
-        <DialogContent title="Edit pad" description={`Pad ${index + 1} of ${pads.length}`}>
+        <DialogContent
+          title="Edit pad"
+          description={`Pad ${index + 1} of ${pads.length}`}
+          returnFocus={returnFocus}
+        >
           <div className="space-y-5">
             <div>
               <label className="mb-1.5 block text-xs text-muted" htmlFor="pad-label">

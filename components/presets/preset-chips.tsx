@@ -82,6 +82,8 @@ export function PresetChips() {
         }
         description={`Your custom pads on “${profile.name}” will be replaced.`}
         confirmLabel={pending === "reset" ? "Reset" : "Load preset"}
+        // The Reset chip disappears after a reset; either way the active chip is the result.
+        returnFocus={() => activeChip.current}
         destructive
         onConfirm={() => {
           if (pending === "reset") dispatch({ type: "resetToPreset" });

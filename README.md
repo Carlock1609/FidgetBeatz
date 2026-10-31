@@ -4,7 +4,7 @@
 
 FidgetBeatz is a mobile-first, browser-based beat-making playground. Tap colorful sound pads, mix overlapping sounds, switch between curated presets, and save up to five personal soundboards — no account, no install, no musical experience required.
 
-> **Project status:** Phase 1 implemented (v0.1.0, 2026-10-18). Every script in the table below has been run. Still open: real-device audio testing (iOS Safari / Android Chrome), a deployed stats provider, and the Figma pass — see [docs/roadmap.md](docs/roadmap.md).
+> **Project status:** Phase 1 implemented (v0.1.0, 2026-10-18). Every script in the table below has been run. Still open: real-device audio testing (iOS Safari / Android Chrome), the first deployment (Vercel for the app, a Cloudflare Worker for stats; steps in [docs/deployment.md](docs/deployment.md)), and the Figma pass — see [docs/roadmap.md](docs/roadmap.md).
 
 ---
 
@@ -62,37 +62,38 @@ npm run dev                  # http://localhost:3000
 
 ## Scripts (keep in sync with package.json)
 
-| Command                           | Purpose                                                                       |
-| --------------------------------- | ----------------------------------------------------------------------------- |
-| `npm run dev`                     | Start the dev server                                                          |
-| `npm run build`                   | Production build                                                              |
-| `npm run start`                   | Serve the static export in `out/` (run `build` first)                         |
-| `npm run lint`                    | ESLint                                                                        |
-| `npm run format` / `format:check` | Prettier write / check                                                        |
-| `npm run typecheck`               | `tsc --noEmit`                                                                |
-| `npm run test`                    | Vitest (unit + component)                                                     |
-| `npm run test:e2e`                | Build, then Playwright E2E (mobile Chromium, mobile WebKit, desktop Chromium) |
-| `npm run sounds:generate`         | Re-render the synthesized sound library + inventory                           |
-| `npm run check`                   | lint + typecheck + test — run before every merge                              |
+| Command                           | Purpose                                                                                        |
+| --------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `npm run dev`                     | Start the dev server                                                                           |
+| `npm run build`                   | Production build                                                                               |
+| `npm run start`                   | Serve the static export in `out/` (run `build` first)                                          |
+| `npm run lint`                    | ESLint                                                                                         |
+| `npm run format` / `format:check` | Prettier write / check                                                                         |
+| `npm run typecheck`               | `tsc --noEmit`                                                                                 |
+| `npm run test`                    | Vitest (unit + component)                                                                      |
+| `npm run test:e2e`                | Build, then Playwright E2E (mobile Chromium, mobile WebKit, desktop Chromium)                  |
+| `npm run test:stats`              | Unit tests for the stats counter service (run `npm install` in `services/stats-counter` first) |
+| `npm run sounds:generate`         | Re-render the synthesized sound library + inventory                                            |
+| `npm run check`                   | lint + typecheck + test — run before every merge                                               |
 
 ## Environment variables
 
-| Variable                                             | Required | Purpose                                                                          |
-| ---------------------------------------------------- | -------- | -------------------------------------------------------------------------------- |
-| `NEXT_PUBLIC_STATS_URL`                              | No       | Visitor counter endpoint (ADR 0006). Empty = the footer shows the offline state. |
-| `NEXT_PUBLIC_APP_VERSION` / `NEXT_PUBLIC_APP_COMMIT` | No       | Set automatically at build; override only for testing.                           |
+| Variable                                             | Required | Purpose                                                                                                                                                                                                                          |
+| ---------------------------------------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_STATS_URL`                              | No       | Visitor counter endpoint (ADR 0006), e.g. the deployed `https://fidgetbeatz-stats.<subdomain>.workers.dev` or `http://localhost:8787` for the local counter. Empty = the footer shows the offline state. Baked in at build time. |
+| `NEXT_PUBLIC_APP_VERSION` / `NEXT_PUBLIC_APP_COMMIT` | No       | Set automatically at build; override only for testing.                                                                                                                                                                           |
 
 **Never** put a secret in a `NEXT_PUBLIC_*` variable — those are shipped to the browser.
 
 ## Deployment
 
-Phase 1 has no server-side code, so the app should remain **statically exportable** (`output: 'export'`) and deployable to any static host. This keeps hosting cost near zero and avoids lock-in.
+Phase 1 has no server-side code, so the app stays **statically exportable** (`output: 'export'`) and deployable to any static host ([ADR 0002](docs/decisions/0002-no-backend-in-phase-1.md)).
 
-- **Vercel Hobby** is free but limited to **non-commercial personal use**; any monetization requires a paid plan. Fine for a prototype, not for a commercial launch.
-- Other static hosts (e.g. Cloudflare Pages, Netlify, GitHub Pages) are viable. Check each provider's current limits and commercial-use terms before choosing — they change.
+- **Hosting:** the app goes on **Vercel** (production from `main`, a preview per PR) and the visitor counter on a **Cloudflare Worker** ([ADR 0009](docs/decisions/0009-hosting-vercel-and-cloudflare.md)). **Neither is deployed yet.** The first-time setup, in order, is in [docs/deployment.md](docs/deployment.md).
+- **CI:** GitHub Actions ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs lint, format check, typecheck, unit tests, the stats service tests, the build and E2E on every PR and push to `main`. Dependabot opens weekly update PRs.
+- **Node:** 24, from `.nvmrc` (`engines` allows 24 or later).
+- **Vercel Hobby** is free but limited to **non-commercial personal use**; any monetization requires a paid plan or another host.
 - A custom domain is optional and is the only expected cost.
-
-See [ADR 0002](docs/decisions/0002-no-backend-in-phase-1.md).
 
 ## Documentation
 
@@ -107,11 +108,14 @@ See [ADR 0002](docs/decisions/0002-no-backend-in-phase-1.md).
 | [docs/sound-licensing.md](docs/sound-licensing.md)                                       | Approved sources, asset inventory, adding sounds        |
 | [docs/profiles-and-presets.md](docs/profiles-and-presets.md)                             | Data models, storage, validation, migrations            |
 | [docs/roadmap.md](docs/roadmap.md)                                                       | Phases, stages, Phase 1 definition of done              |
+| [docs/deployment.md](docs/deployment.md)                                                 | CI, Vercel and Worker setup, day-to-day deploys         |
 | [docs/decisions/](docs/decisions/)                                                       | Architecture Decision Records                           |
 | [CLAUDE.md](CLAUDE.md)                                                                   | Working rules for Claude Code in this repo              |
 
-[docs/api.md](docs/api.md) documents the external stats endpoint contract. The app itself has no API routes.
+[docs/api.md](docs/api.md) documents the external stats endpoint contract, and [services/stats-counter](services/stats-counter/README.md) implements it. The app itself has no API routes.
 
 ## Credits and licensing
+
+The code is released under the [MIT License](LICENSE).
 
 All bundled sounds are generated by `scripts/generate-sounds.mjs` and released CC0 by the project. Each one has a license record in `data/sounds/inventory.json`, summarized in [docs/sound-licensing.md](docs/sound-licensing.md). The version sheet in the app says so too. Any third-party sound added later must follow the license gate in that doc.

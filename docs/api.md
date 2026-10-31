@@ -1,12 +1,12 @@
 # Stats endpoint contract
 
-> **Status:** the client side is implemented (`lib/stats/stats-client.ts`). **No provider is deployed yet** — ADR 0006's provider choice is still open — so with `NEXT_PUBLIC_STATS_URL` empty the footer shows the offline state. The app itself has no API routes.
+> **Status:** the client (`lib/stats/stats-client.ts`) and the server (`services/stats-counter/`, a Cloudflare Worker + Durable Object, ADR 0006) are both implemented and unit-tested. **The server is not deployed yet**, so with `NEXT_PUBLIC_STATS_URL` empty the footer shows the offline state. The app itself has no API routes.
 
-The visitor counter is an external service (ADR 0006). Any provider or small serverless function that implements the contract below works.
+The visitor counter is an external service (ADR 0006). The reference implementation is `services/stats-counter/`; its README covers local dev and deployment. Any other service that implements the contract below would also work.
 
 ## Base URL
 
-`NEXT_PUBLIC_STATS_URL`, e.g. `https://stats.example.workers.dev`. A trailing slash is ignored. It is public (shipped to the browser), so it must never contain a secret.
+`NEXT_PUBLIC_STATS_URL`, e.g. `https://fidgetbeatz-stats.<subdomain>.workers.dev`, or `http://localhost:8787` for the local counter. A trailing slash is ignored. It is public (shipped to the browser), so it must never contain a secret.
 
 ## Endpoints
 
@@ -44,8 +44,22 @@ Both endpoints are `POST` with a JSON body and return the same JSON shape.
 - Heartbeats stop while the tab is hidden and resume when it's visible again.
 - Stats start after first paint (`requestIdleCallback`) and never touch the audio path.
 
-## Server requirements (for whoever implements it)
+## Errors
 
-- Rate-limit per IP at the provider (e.g. at most 1 visit per IP per minute) so the counter can't be inflated cheaply.
-- Store no IPs or personal data beyond what the provider needs transiently for rate limiting.
-- No authentication: the counts are public.
+All responses are `content-type: application/json` with `cache-control: no-store`. Every status except 403 carries the CORS headers. The client treats every non-2xx response as a failure.
+
+| Status | When                                                                                                          |
+| ------ | ------------------------------------------------------------------------------------------------------------- |
+| 204    | `OPTIONS` preflight from an allowed origin                                                                    |
+| 400    | Body isn't `{ "tab": "<id>" }`: not JSON, larger than 256 bytes, or `tab` doesn't match `[A-Za-z0-9_-]{8,64}` |
+| 403    | `Origin` header missing or not in `ALLOWED_ORIGINS`                                                           |
+| 404    | Any path other than `/visit` or `/heartbeat` (a trailing slash is allowed)                                    |
+| 405    | Any method other than `POST` or `OPTIONS`                                                                     |
+| 429    | More than 60 requests from one IP in a minute; `Retry-After: 60`                                              |
+
+## Server behavior (`services/stats-counter`)
+
+- **now:** distinct `tab` ids seen in the last 60 s, held in memory only.
+- **visits:** total visits, persisted. Each IP counts at most one visit a minute. A visit over that limit still returns 200 with the counts and still marks the tab active; it just isn't counted.
+- **Privacy:** IPs are hashed with a salt that exists only in memory, used only for rate limiting, and dropped after about a minute. Nothing personal is stored, and there are no cookies.
+- **No authentication:** the counts are public.
