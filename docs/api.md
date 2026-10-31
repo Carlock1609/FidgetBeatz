@@ -6,7 +6,7 @@ The visitor counter is an external service (ADR 0006). The reference implementat
 
 ## Base URL
 
-`NEXT_PUBLIC_STATS_URL`, e.g. `https://fidgetbeatz-stats.<subdomain>.workers.dev`, or `http://localhost:8787` for the local counter. A trailing slash is ignored. It is public (shipped to the browser), so it must never contain a secret.
+`NEXT_PUBLIC_STATS_URL`, in production `https://stats.fidgetbeatz.com`, or `http://localhost:8787` for the local counter. A trailing slash is ignored. It is public (shipped to the browser), so it must never contain a secret.
 
 ## Endpoints
 
