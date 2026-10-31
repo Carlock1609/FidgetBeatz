@@ -3,35 +3,40 @@
 import { Check } from "lucide-react";
 import { DropdownMenu as Menu } from "radix-ui";
 import type { ComponentProps } from "react";
+import { useInertBackground } from "@/hooks/use-inert-background";
 import { cn } from "@/lib/utils/cn";
 
 export const DropdownMenu = Menu.Root;
 export const DropdownMenuTrigger = Menu.Trigger;
 export const DropdownMenuRadioGroup = Menu.RadioGroup;
 
-/** Menu surface in the stage palette. */
-export function DropdownMenuContent({
-  className,
-  sideOffset = 6,
-  ...props
-}: ComponentProps<typeof Menu.Content>) {
+/** Menu surface in the stage palette. The app shell is `inert` while it is open. */
+export function DropdownMenuContent(props: ComponentProps<typeof Menu.Content>) {
   return (
     <Menu.Portal>
-      <Menu.Content
-        sideOffset={sideOffset}
-        collisionPadding={12}
-        className={cn(
-          "z-50 min-w-[220px] overflow-hidden rounded-control border border-border bg-surface-1 p-1.5 text-text shadow-[0_18px_40px_-12px_rgb(0_0_0/0.9)] data-[state=open]:animate-[fb-fade-in_120ms_ease-out]",
-          className,
-        )}
-        {...props}
-      />
+      <MenuSurface {...props} />
     </Menu.Portal>
   );
 }
 
+function MenuSurface({ className, sideOffset = 6, ...props }: ComponentProps<typeof Menu.Content>) {
+  // Lives inside the portal so it mounts and unmounts with the open menu.
+  useInertBackground();
+  return (
+    <Menu.Content
+      sideOffset={sideOffset}
+      collisionPadding={12}
+      className={cn(
+        "z-50 min-w-[220px] overflow-hidden rounded-control border border-border bg-surface-1 p-1.5 text-text shadow-[0_18px_40px_-12px_rgb(0_0_0/0.9)] data-[state=open]:animate-[fb-fade-in_120ms_ease-out]",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
 const itemClass =
-  "relative flex min-h-11 cursor-default items-center gap-3 rounded-[9px] px-3 text-sm outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-40 data-[highlighted]:bg-surface-2 [&_svg]:size-4 [&_svg]:text-muted";
+  "relative flex min-h-11 cursor-default items-center gap-3 rounded-[9px] px-3 text-sm outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-40 data-[highlighted]:bg-surface-2 focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-inset [&_svg]:size-4 [&_svg]:text-muted";
 
 /** A menu action. */
 export function DropdownMenuItem({ className, ...props }: ComponentProps<typeof Menu.Item>) {

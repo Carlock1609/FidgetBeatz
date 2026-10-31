@@ -7,3 +7,4 @@ test-results
 playwright-report
 data/sounds/inventory.json
 .claude
+.wrangler

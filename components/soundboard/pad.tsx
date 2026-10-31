@@ -32,29 +32,28 @@ export function useIsMissing(soundId: string | null): boolean {
   return soundId !== null && (!getSound(soundId) || status === "error");
 }
 
+/**
+ * Accessible name for a pad. It starts with the pad's visible text so it satisfies WCAG 2.5.3
+ * (Label in Name): a missing pad shows "Missing sound" above its label.
+ */
+function padName(pad: PadModel, missing: boolean): string {
+  if (missing) return `Missing sound, ${pad.label || "Pad"}`;
+  return pad.label || "Empty pad";
+}
+
 function PadFace({
   pad,
   missing,
-  hint,
   editing,
 }: {
   pad: PadModel;
   missing: boolean;
-  hint?: string;
   editing?: boolean;
 }) {
   const empty = pad.soundId === null;
   return (
     <>
       <span className="pad-led absolute top-3 left-3 size-2 rounded-full" aria-hidden />
-      {hint && !editing && (
-        <kbd
-          className="absolute top-2 right-2.5 hidden font-mono text-[10px] opacity-50 pointer-fine:block"
-          aria-hidden
-        >
-          {hint}
-        </kbd>
-      )}
       {editing && <GripVertical className="absolute top-2 right-2 size-4 opacity-50" aria-hidden />}
       <span className="flex h-full w-full flex-col items-start justify-end gap-1 p-3 text-left">
         {missing && <AlertTriangle className="size-4" aria-hidden />}
@@ -62,9 +61,7 @@ function PadFace({
         <span className="line-clamp-2 text-[13px] leading-tight font-semibold tracking-wide uppercase sm:text-sm">
           {missing ? "Missing sound" : empty ? pad.label || "Empty" : pad.label}
         </span>
-        {missing && pad.label && (
-          <span className="text-[10px] font-normal opacity-70">{pad.label}</span>
-        )}
+        {missing && pad.label && <span className="text-[10px] font-normal">{pad.label}</span>}
       </span>
     </>
   );
@@ -81,7 +78,8 @@ export interface PlayPadProps {
 
 /**
  * A playable pad. Sound starts on `pointerdown` (not click, which waits for release), from a
- * pre-decoded buffer, before any visual work.
+ * pre-decoded buffer, before any visual work. The key hint renders beside the button (the
+ * parent must be `relative`) so the shortcut is exposed via `aria-keyshortcuts`, not the name.
  */
 export const PlayPad = memo(function PlayPad({ pad, index, hint, onRegister }: PlayPadProps) {
   const engine = useAudioEngine();
@@ -99,32 +97,43 @@ export const PlayPad = memo(function PlayPad({ pad, index, hint, onRegister }: P
   }, [index, trigger, onRegister]);
 
   return (
-    <button
-      ref={ref}
-      type="button"
-      data-color={pad.color}
-      data-missing={missing || undefined}
-      data-testid="pad"
-      className={cn(
-        "pad relative h-full w-full overflow-hidden rounded-[22px] md:rounded-[24px]",
-        pad.soundId === null && "pad-empty",
-      )}
-      aria-label={missing ? `${pad.label || "Pad"}, missing sound` : pad.label || "Empty pad"}
-      aria-keyshortcuts={hint}
-      onPointerDown={(e) => {
-        if (e.pointerType === "mouse" && e.button !== 0) return;
-        trigger();
-      }}
-      onKeyDown={(e) => {
-        if ((e.key === " " || e.key === "Enter") && !e.repeat) {
-          e.preventDefault();
+    <>
+      <button
+        ref={ref}
+        type="button"
+        data-color={pad.color}
+        data-missing={missing || undefined}
+        data-testid="pad"
+        className={cn(
+          "pad relative h-full w-full overflow-hidden rounded-[22px] md:rounded-[24px]",
+          pad.soundId === null && "pad-empty",
+        )}
+        aria-label={padName(pad, missing)}
+        aria-keyshortcuts={hint}
+        onPointerDown={(e) => {
+          if (e.pointerType === "mouse" && e.button !== 0) return;
           trigger();
-        }
-      }}
-      onContextMenu={(e) => e.preventDefault()}
-    >
-      <PadFace pad={pad} missing={missing} hint={hint} />
-    </button>
+        }}
+        onKeyDown={(e) => {
+          if ((e.key === " " || e.key === "Enter") && !e.repeat) {
+            e.preventDefault();
+            trigger();
+          }
+        }}
+        onContextMenu={(e) => e.preventDefault()}
+      >
+        <PadFace pad={pad} missing={missing} />
+      </button>
+      {hint && (
+        <kbd
+          className="pad-hint pointer-events-none absolute top-2 right-2.5 hidden font-mono text-[10px] pointer-fine:block"
+          data-color={pad.color}
+          aria-hidden
+        >
+          {hint}
+        </kbd>
+      )}
+    </>
   );
 });
 
@@ -161,7 +170,8 @@ export function EditPad({
       data-dragging={dragging || undefined}
       data-testid="edit-pad"
       aria-pressed={selected}
-      aria-label={`${pad.label || "Empty pad"}${missing ? ", missing sound" : ""}. Edit pad`}
+      data-pad-id={pad.id}
+      aria-label={`${padName(pad, missing)}. Edit pad`}
       className={cn(
         "pad relative h-full w-full overflow-hidden rounded-[22px] md:rounded-[24px]",
         pad.soundId === null && "pad-empty",

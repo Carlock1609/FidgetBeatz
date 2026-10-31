@@ -10,7 +10,8 @@ import type { SoundCategory, SoundId } from "@/types";
 /**
  * Dropdown-style sound chooser: a trigger showing the current sound that expands into a
  * category-filtered list. Picking a sound assigns it and previews it; the play button on each
- * row previews without assigning.
+ * row previews without assigning. Rows hold two buttons, so the list is a plain list of
+ * toggle buttons (`aria-pressed`), not a listbox — options can't contain interactive children.
  */
 export function SoundPicker({
   value,
@@ -87,31 +88,26 @@ export function SoundPicker({
             ))}
           </div>
           <ul
-            role="listbox"
             aria-label={`${CATEGORY_META[category].label} sounds`}
             className="max-h-56 overflow-y-auto"
           >
             {sounds.map((sound) => {
               const selected = sound.id === value;
               return (
-                <li
-                  key={sound.id}
-                  role="option"
-                  aria-selected={selected}
-                  className="flex items-center gap-1"
-                >
+                <li key={sound.id} className="flex items-center gap-1">
                   <button
                     type="button"
+                    aria-pressed={selected}
                     onClick={() => {
                       onChange(sound.id);
                       onPreview(sound.id);
                     }}
                     className={cn(
                       "flex h-11 flex-1 items-center gap-2.5 rounded-[9px] px-2.5 text-left text-sm outline-none hover:bg-surface-2 focus-visible:ring-2 focus-visible:ring-focus",
-                      selected && "text-accent",
+                      selected && "font-semibold",
                     )}
                   >
-                    <span className="size-4">
+                    <span className="size-4 text-accent">
                       {selected && <Check className="size-4" aria-hidden />}
                     </span>
                     {sound.name}

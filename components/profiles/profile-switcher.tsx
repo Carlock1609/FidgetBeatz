@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronDown, PencilLine, Plus, Trash2, UserRound } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Dialog, DialogClose, DialogContent } from "@/components/ui/dialog";
@@ -32,6 +32,9 @@ export function ProfileSwitcher() {
   const dispatch = useBoardDispatch();
   const active = selectActiveProfile(state);
   const [dialog, setDialog] = useState<DialogKind>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
+  // Dialogs open from menu items that are gone by the time they close.
+  const returnFocus = () => trigger.current;
   const canCreate = state.profiles.length < LIMITS.maxProfiles;
 
   if (!state.hydrated) {
@@ -43,6 +46,7 @@ export function ProfileSwitcher() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
+            ref={trigger}
             variant="default"
             className="max-w-[60vw] justify-between gap-2 pr-3 pl-3 sm:max-w-xs"
             aria-label={`Profile: ${active.name}`}
@@ -88,6 +92,7 @@ export function ProfileSwitcher() {
       <CreateProfileDialog
         open={dialog === "create"}
         onOpenChange={(o) => setDialog(o ? "create" : null)}
+        returnFocus={returnFocus}
       />
       <RenameProfileDialog
         key={active.id}
@@ -95,6 +100,7 @@ export function ProfileSwitcher() {
         onOpenChange={(o) => setDialog(o ? "rename" : null)}
         initialName={active.name}
         onRename={(name) => dispatch({ type: "renameProfile", profileId: active.id, name })}
+        returnFocus={returnFocus}
       />
       <ConfirmDialog
         open={dialog === "delete"}
@@ -104,6 +110,7 @@ export function ProfileSwitcher() {
         confirmLabel="Delete"
         destructive
         onConfirm={() => dispatch({ type: "deleteProfile", profileId: active.id })}
+        returnFocus={returnFocus}
       />
     </>
   );
@@ -114,11 +121,13 @@ function RenameProfileDialog({
   onOpenChange,
   initialName,
   onRename,
+  returnFocus,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   initialName: string;
   onRename: (name: string) => void;
+  returnFocus: () => HTMLElement | null;
 }) {
   const [name, setName] = useState(initialName);
   const valid = name.trim().length > 0;
@@ -130,7 +139,7 @@ function RenameProfileDialog({
         onOpenChange(o);
       }}
     >
-      <DialogContent title="Rename profile">
+      <DialogContent title="Rename profile" returnFocus={returnFocus}>
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -167,9 +176,11 @@ function RenameProfileDialog({
 function CreateProfileDialog({
   open,
   onOpenChange,
+  returnFocus,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  returnFocus: () => HTMLElement | null;
 }) {
   const dispatch = useBoardDispatch();
   const [name, setName] = useState("");
@@ -189,6 +200,7 @@ function CreateProfileDialog({
       <DialogContent
         title="New profile"
         description="Start from any preset — you can change everything later."
+        returnFocus={returnFocus}
       >
         <form
           onSubmit={(e) => {

@@ -40,7 +40,8 @@ export function AppFooter({ whatsNew }: { whatsNew: string[] }) {
         type="button"
         onClick={() => setVersionOpen(true)}
         className="-my-1 inline-flex h-11 shrink-0 items-center outline-none focus-visible:[&>span]:ring-2 focus-visible:[&>span]:ring-focus"
-        aria-label={`Version ${BUILD_INFO.version}, what's new`}
+        // The name contains the visible "v0.1.0" (WCAG 2.5.3 Label in Name).
+        aria-label={`Version v${BUILD_INFO.version}, what's new`}
       >
         <span className="rounded-full border border-border px-2.5 py-0.5 text-text hover:border-muted">
           v{BUILD_INFO.version}

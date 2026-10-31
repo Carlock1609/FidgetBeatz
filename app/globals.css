@@ -44,6 +44,8 @@
   --color-text: var(--text);
   --color-muted: var(--text-muted);
   --color-accent: var(--accent);
+  /* Accent as text: lifted toward white so blue/violet accents clear 4.5:1 (Stage 7 a11y pass). */
+  --color-accent-text: color-mix(in oklab, var(--accent) 85%, white);
   --color-lcd: var(--lcd-bg);
   --color-lcd-border: var(--lcd-border);
   --color-lcd-text: var(--lcd-text);
@@ -98,12 +100,15 @@ body {
   --pad: var(--pad-pink);
 }
 
-/* Stage glow tinted by the active preset's accent. Static: no looping animation. */
+/*
+ * Stage glow tinted by the active preset's accent. Static: no looping animation.
+ * Kept at 14% (was 22%) so muted text in the top bar stays ≥ 5:1 on yellow/lime boards.
+ */
 .stage {
   background:
     radial-gradient(
       120% 60% at 50% -10%,
-      color-mix(in oklab, var(--accent) 22%, transparent),
+      color-mix(in oklab, var(--accent) 14%, transparent),
       transparent 70%
     ),
     radial-gradient(
@@ -125,7 +130,8 @@ body {
     linear-gradient(180deg, color-mix(in oklab, white 6%, transparent), transparent 45%),
     var(--face);
   border: 1.5px solid color-mix(in oklab, var(--pad) 38%, transparent);
-  color: var(--pad);
+  /* Label text is lifted toward white: pure blue/violet on the pad face is only ~4.1:1. */
+  color: color-mix(in oklab, var(--pad) 85%, white);
   box-shadow:
     0 6px 18px -8px rgb(0 0 0 / 0.8),
     inset 0 1px 0 rgb(255 255 255 / 0.05);
@@ -165,6 +171,18 @@ body {
 .pad[data-hit] .pad-led {
   background: white;
   box-shadow: 0 0 10px white;
+  transition-duration: 40ms;
+}
+/* Desktop key hint: a sibling of the pad button (so it isn't part of the pad's name). */
+.pad-hint {
+  color: color-mix(in oklab, var(--pad) 85%, white);
+  transition: color 300ms ease-out;
+}
+.pad[data-missing] + .pad-hint {
+  --pad: var(--text-muted);
+}
+.pad[data-hit] + .pad-hint {
+  color: var(--pad-base);
   transition-duration: 40ms;
 }
 .pad:focus-visible {

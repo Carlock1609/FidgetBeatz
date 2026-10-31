@@ -1,0 +1,20 @@
+// Cloudflare Worker config for the FidgetBeatz stats counter (ADR 0006).
+// Deploy steps: services/stats-counter/README.md.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "fidgetbeatz-stats",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  // Comma-separated exact origins allowed to call the service. Set the production origin here
+  // (or override with `wrangler deploy --var ALLOWED_ORIGINS:...`) before deploying.
+  "vars": {
+    "ALLOWED_ORIGINS": "http://localhost:3000",
+  },
+  "durable_objects": {
+    "bindings": [{ "name": "STATS_COUNTER", "class_name": "StatsCounter" }],
+  },
+  // SQLite-backed Durable Objects are the only kind available on the Workers Free plan.
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["StatsCounter"] }],
+  "observability": { "enabled": false },
+}

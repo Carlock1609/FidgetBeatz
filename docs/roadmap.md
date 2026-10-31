@@ -22,7 +22,7 @@
 - [x] Sound display (LCD) component: idle and hit states, meter animation
 - [x] Responsive pad grid; all pad states — phone portrait and desktop checked in a browser; the landscape-phone side rail is implemented but not yet checked on a device
 - [x] Focus mode: toggle, full-bleed grid, ghosted exit, Fullscreen API where supported, Esc to exit — toggle/exit covered by E2E; Esc and real fullscreen implemented but only exercised manually on desktop Chromium
-- [ ] Reduced motion and focus states verified — implemented (CSS + `MotionConfig reducedMotion="user"`, 2 px focus rings), not yet checked with a screen reader or OS reduced-motion setting
+- [x] Reduced motion and focus states verified — 2026-10-19, by Playwright with `reducedMotion: 'reduce'` emulated (the `prefers-reduced-motion` media query): pads don't scale on hit or on a board change, and the selected/picked-up pad doesn't lift or scale; a control test confirms the hit scale without it. Found and fixed: Motion still rendered the pads' `scale(0.92)` entrance under reduced motion, so the play grid now fades only. Every Tab stop on the play view has a ≥ 2 px ring (desktop Chromium); menu items gained a ring. Not checked with a real screen reader or on a device with the OS setting on
 
 ### Stage 3 — Audio
 
@@ -45,14 +45,14 @@
 ### Stage 6 — Profiles and stats
 
 - [x] 5 profiles, persistence, validation, migrations, recovery
-- [ ] **6b:** stats provider chosen and recorded in ADR 0006; `lib/stats` client; visitors-now heartbeat; page-visit counter — client, heartbeat and visit logic done and unit-tested; **provider not chosen/deployed**
+- [ ] **6b:** stats provider chosen and recorded in ADR 0006; `lib/stats` client; visitors-now heartbeat; page-visit counter — client done and unit-tested; provider chosen (Cloudflare Workers Free + Durable Object) and `services/stats-counter/` built, unit-tested and checked locally against the app; **not deployed yet**
 - [x] Stats offline state; E2E with the stats endpoint blocked
 - [x] Version sheet (version, build date, what's new)
 
 ### Stage 7 — Polish and testing
 
 - [ ] Animation tuning; rapid-tap performance on a mid-range phone
-- [ ] Accessibility pass
+- [x] Accessibility pass — 2026-10-19. axe (WCAG 2.2 A/AA + best practices, `@axe-core/playwright`) runs in the E2E suite on all three projects over the play view (Classic Drums, Bass, Piano), focus mode, Edit Mode, the pad editor sheet with the sound list, the discard confirm, the profile menu, new/rename/delete profile dialogs and the version sheet — no violations. Fixed: pad and version-chip names now contain their visible text (key hints moved outside the pad button); focusable shell behind open overlays (the shell is now `inert`); content outside landmarks (chrome is a `<header>`); no `h1` in edit/focus mode; buttons nested in `role="option"` in the sound list (now toggle buttons). Keyboard-only (desktop): pad shortcuts, Space on a focused pad, Enter to select in Edit Mode, M + arrows to move (with announcements), Esc closes the sheet and focus returns to the pad; dialogs and mode switches now return or move focus instead of dropping it to `<body>`. Contrast checked against `globals.css` (math, then measured in Chromium since axe can't resolve `color-mix`): muted text ≥ 5.3:1 everywhere; blue/violet pad labels were 4.1–4.3:1 and key hints ~2–4:1, now ≥ 5.2:1 (hover ≥ 4.8:1); also fixed accent-colored text, the danger button and the top glow. Not done: manual screen-reader pass (VoiceOver/TalkBack)
 - [x] Full suite + build green
 
 ### Stage 8 — Handoff

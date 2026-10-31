@@ -57,12 +57,12 @@ A change is **not done** until it is verified by a command you actually ran or b
 
 ## 7. Testing
 
-| Layer      | Tool                                             | Covers                                                                                                             |
-| ---------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
-| Unit       | Vitest                                           | reducer actions, storage validation & migration, preset integrity, audio engine logic with a mocked `AudioContext` |
-| Component  | React Testing Library                            | pad triggers call engine, edit mode add/remove/move, sound picker, profile switcher                                |
-| End-to-end | Playwright (Chromium + WebKit, mobile viewports) | play flow, edit & save, preset switch, profile persistence across reload, corrupted storage recovery               |
-| Manual     | Real devices                                     | audio latency & unlock on iOS Safari and Android Chrome                                                            |
+| Layer      | Tool                                             | Covers                                                                                                                                                                         |
+| ---------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Unit       | Vitest                                           | reducer actions, storage validation & migration, preset integrity, audio engine logic with a mocked `AudioContext`                                                             |
+| Component  | React Testing Library                            | pad triggers call engine, edit mode add/remove/move, sound picker, profile switcher                                                                                            |
+| End-to-end | Playwright (Chromium + WebKit, mobile viewports) | play flow, edit & save, preset switch, profile persistence across reload, corrupted storage recovery; axe scans of every view and overlay, keyboard-only flows, reduced motion |
+| Manual     | Real devices                                     | audio latency & unlock on iOS Safari and Android Chrome                                                                                                                        |
 
 Required test cases (Phase 1): sound assignment; playback initiation; rapid repeated taps; overlapping playback; add/remove pads; reorder (drag + keyboard/move buttons); save & restore profiles; switch presets; invalid stored data; unavailable sound; edit mode enter/save/cancel; responsive layout on a phone viewport.
 

@@ -19,7 +19,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Plus } from "lucide-react";
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { useCallback, useEffect, useRef, type CSSProperties } from "react";
 import { useBoardDispatch, useBoardState } from "@/features/soundboard/board-provider";
 import { selectActiveProfile, selectVisiblePads } from "@/features/soundboard/board-reducer";
@@ -72,6 +72,9 @@ export function PadGrid() {
 }
 
 function PlayGrid({ pads, columns }: { pads: Pad[]; columns: GridColumns }) {
+  // MotionConfig's reducedMotion="user" still renders the `initial` scale for a frame, so
+  // reduced motion drops the scale-in entirely and keeps only the fade.
+  const reduceMotion = useReducedMotion();
   const triggers = useRef(new Map<number, () => void>());
   const register = useCallback((index: number, trigger: (() => void) | null) => {
     if (trigger) triggers.current.set(index, trigger);
@@ -98,9 +101,9 @@ function PlayGrid({ pads, columns }: { pads: Pad[]; columns: GridColumns }) {
       {pads.map((pad, index) => (
         <motion.div
           key={pad.id}
-          className="min-h-0"
-          initial={{ opacity: 0, scale: 0.92 }}
-          animate={{ opacity: 1, scale: 1 }}
+          className="relative min-h-0"
+          initial={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.92 }}
+          animate={reduceMotion ? { opacity: 1 } : { opacity: 1, scale: 1 }}
           transition={{
             duration: 0.28,
             delay: Math.min(index, 16) * 0.015,

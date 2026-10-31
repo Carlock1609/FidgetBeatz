@@ -13,6 +13,7 @@ export function ConfirmDialog({
   confirmLabel,
   onConfirm,
   destructive,
+  returnFocus,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -21,10 +22,17 @@ export function ConfirmDialog({
   confirmLabel: string;
   onConfirm: () => void;
   destructive?: boolean;
+  /** Where focus goes on close; see `DialogContent`. */
+  returnFocus?: () => HTMLElement | null | undefined;
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent title={title} description={description} role="alertdialog">
+      <DialogContent
+        title={title}
+        description={description}
+        role="alertdialog"
+        returnFocus={returnFocus}
+      >
         <div className="flex justify-end gap-2">
           <DialogClose asChild>
             <Button variant="ghost">Keep</Button>

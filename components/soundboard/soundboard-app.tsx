@@ -6,7 +6,7 @@
  */
 import { Minimize2, Volume2, VolumeX } from "lucide-react";
 import { AnimatePresence, motion, MotionConfig } from "motion/react";
-import { useEffect, type CSSProperties } from "react";
+import { useEffect, useRef, type CSSProperties } from "react";
 import { PadEditor } from "@/components/editor/pad-editor";
 import { PresetChips } from "@/components/presets/preset-chips";
 import { ProfileSwitcher } from "@/components/profiles/profile-switcher";
@@ -90,6 +90,24 @@ const chrome = {
   transition: { duration: 0.2 },
 };
 
+/**
+ * Switching modes unmounts the control that was pressed (Edit, Save, Focus mode, Exit), which
+ * would drop keyboard focus to `<body>`. Move it to the matching control in the new mode.
+ * Programmatic focus after a pointer press shows no focus ring, so touch users see no change.
+ */
+function useFocusOnModeChange(editing: boolean, focus: boolean) {
+  const previous = useRef({ editing, focus });
+  useEffect(() => {
+    const was = previous.current;
+    previous.current = { editing, focus };
+    let selector: string;
+    if (focus !== was.focus) selector = focus ? "[data-exit-focus]" : "[data-focus-toggle]";
+    else if (editing !== was.editing) selector = editing ? "[data-pad-id]" : "[data-edit-toggle]";
+    else return;
+    document.querySelector<HTMLElement>(selector)?.focus();
+  }, [editing, focus]);
+}
+
 function Shell({ whatsNew }: { whatsNew: string[] }) {
   const state = useBoardState();
   const profile = selectActiveProfile(state);
@@ -99,6 +117,7 @@ function Shell({ whatsNew }: { whatsNew: string[] }) {
   const accent = getPreset(profile.basePresetId)?.accent ?? "orange";
   const editing = state.mode === "edit";
   const showChrome = !focus;
+  useFocusOnModeChange(editing, focus);
 
   return (
     <div
@@ -109,10 +128,11 @@ function Shell({ whatsNew }: { whatsNew: string[] }) {
           : "px-[max(16px,env(safe-area-inset-left))] pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] md:px-6",
       )}
       style={{ "--accent": `var(--pad-${accent})` } as CSSProperties}
+      data-app-root
     >
       <AnimatePresence initial={false}>
         {showChrome && (
-          <motion.div
+          <motion.header
             key="chrome"
             {...chrome}
             className="mx-auto flex w-full max-w-[960px] shrink-0 flex-col gap-2.5 short-landscape:mr-4 short-landscape:w-[300px] short-landscape:overflow-y-auto"
@@ -128,7 +148,7 @@ function Shell({ whatsNew }: { whatsNew: string[] }) {
                 <PresetChips />
               </>
             )}
-          </motion.div>
+          </motion.header>
         )}
       </AnimatePresence>
 
@@ -139,6 +159,8 @@ function Shell({ whatsNew }: { whatsNew: string[] }) {
         )}
         aria-label="Soundboard"
       >
+        {/* The visible wordmark heading lives in the play-mode top bar only. */}
+        {(focus || editing) && <h1 className="sr-only">FidgetBeatz</h1>}
         <PadGrid />
       </main>
 
@@ -155,6 +177,7 @@ function Shell({ whatsNew }: { whatsNew: string[] }) {
             type="button"
             onClick={exit}
             aria-label="Exit focus mode"
+            data-exit-focus
             className="fixed right-[max(12px,env(safe-area-inset-right))] bottom-[max(12px,env(safe-area-inset-bottom))] z-30 grid size-11 place-items-center rounded-full border border-border bg-surface-1/80 text-text opacity-40 transition-opacity outline-none hover:opacity-100 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-focus active:opacity-100"
           >
             <Minimize2 className="size-5" />

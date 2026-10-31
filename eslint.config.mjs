@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Separate Cloudflare Worker package with its own tooling (ADR 0006).
+    "services/**",
   ]),
 ]);
 

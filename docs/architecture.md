@@ -56,6 +56,8 @@ data/
 types/                  shared domain types (Sound, Pad, Preset, Profile)
 public/sounds/<category>/<sound-id>.wav
 tests/                  e2e (Playwright); unit tests live beside source as *.test.ts(x)
+services/
+  stats-counter/        Visitor counter: Cloudflare Worker + Durable Object, own package.json (ADR 0006); not part of the app build
 docs/                   this documentation
 ```
 
@@ -101,7 +103,7 @@ pointerdown on <Pad>
 
 ### Stats and version
 
-`lib/stats` starts after hydration: it sends one visit increment per page load, a heartbeat every ~30 s while visible, and polls counts every ~30 s. Failures switch the footer to offline. The version is a build-time constant (`NEXT_PUBLIC_APP_VERSION`).
+`lib/stats` starts after hydration: it sends one visit increment per page load, then a heartbeat every ~30 s while visible; each response carries the current counts, so there is no separate poll. Failures switch the footer to offline. The counter itself lives in `services/stats-counter/` (a Cloudflare Worker, deployed separately). The version is a build-time constant (`NEXT_PUBLIC_APP_VERSION`).
 
 The hot path deliberately bypasses React state. Re-rendering on every tap would add latency and jank under rapid input. See `docs/audio-system.md`.
 

@@ -33,7 +33,7 @@ function Wordmark() {
     <div className="flex items-center gap-2.5">
       <LogoMark className="size-7" />
       <h1 className="text-lg font-extrabold tracking-tight">
-        Fidget<span className="text-accent">Beatz</span>
+        Fidget<span className="text-accent-text">Beatz</span>
       </h1>
     </div>
   );
@@ -53,6 +53,7 @@ export function TopBar({ onFocus }: { onFocus: () => void }) {
           onClick={onFocus}
           aria-label="Focus mode"
           title="Focus mode"
+          data-focus-toggle
         >
           <Maximize2 />
         </Button>
@@ -61,6 +62,7 @@ export function TopBar({ onFocus }: { onFocus: () => void }) {
           onClick={() => dispatch({ type: "enterEdit" })}
           disabled={!hydrated}
           aria-label="Edit pads"
+          data-edit-toggle
         >
           <Pencil />
           Edit
@@ -82,7 +84,7 @@ export function EditBar() {
   return (
     <div className="flex h-[62px] items-center justify-between gap-2">
       <div className="flex min-w-0 items-center gap-2.5">
-        <span className="shrink-0 rounded-full border border-dashed border-accent px-2.5 py-1 font-mono text-[10px] tracking-[0.14em] whitespace-nowrap text-accent uppercase">
+        <span className="shrink-0 rounded-full border border-dashed border-accent px-2.5 py-1 font-mono text-[10px] tracking-[0.14em] whitespace-nowrap text-accent-text uppercase">
           Edit mode
         </span>
         <span className="hidden truncate text-xs text-muted sm:inline">
@@ -107,6 +109,7 @@ export function EditBar() {
         confirmLabel="Discard"
         destructive
         onConfirm={() => dispatch({ type: "cancelEdit" })}
+        returnFocus={() => document.querySelector<HTMLElement>("[data-edit-toggle]")}
       />
     </div>
   );
