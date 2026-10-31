@@ -10,6 +10,8 @@
 4. Run `npm run check` (lint + typecheck + unit tests). Run `npm run test:e2e` for user-flow changes and `npm run build` before closing a stage.
 5. Commit with a clear message (Conventional Commits recommended: `feat:`, `fix:`, `docs:`, `test:`, `refactor:`, `chore:`).
 
+CI (`.github/workflows/ci.yml`) runs the same checks plus the build and E2E on every PR; see [deployment.md](deployment.md). It doesn't replace running them locally.
+
 A change is **not done** until it is verified by a command you actually ran or by a manual check you actually performed (and recorded).
 
 ## 2. TypeScript

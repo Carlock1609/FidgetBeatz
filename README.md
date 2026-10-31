@@ -4,7 +4,7 @@
 
 FidgetBeatz is a mobile-first, browser-based beat-making playground. Tap colorful sound pads, mix overlapping sounds, switch between curated presets, and save up to five personal soundboards — no account, no install, no musical experience required.
 
-> **Project status:** Phase 1 implemented (v0.1.0, 2026-10-18). Every script in the table below has been run. Still open: real-device audio testing (iOS Safari / Android Chrome), deploying the stats counter (built and tested in [services/stats-counter](services/stats-counter/README.md), not deployed), and the Figma pass — see [docs/roadmap.md](docs/roadmap.md).
+> **Project status:** Phase 1 implemented (v0.1.0, 2026-10-18). Every script in the table below has been run. Still open: real-device audio testing (iOS Safari / Android Chrome), the first deployment (Vercel for the app, a Cloudflare Worker for stats; steps in [docs/deployment.md](docs/deployment.md)), and the Figma pass — see [docs/roadmap.md](docs/roadmap.md).
 
 ---
 
@@ -87,14 +87,13 @@ npm run dev                  # http://localhost:3000
 
 ## Deployment
 
-Phase 1 has no server-side code, so the app should remain **statically exportable** (`output: 'export'`) and deployable to any static host. This keeps hosting cost near zero and avoids lock-in.
+Phase 1 has no server-side code, so the app stays **statically exportable** (`output: 'export'`) and deployable to any static host ([ADR 0002](docs/decisions/0002-no-backend-in-phase-1.md)).
 
-- **Vercel Hobby** is free but limited to **non-commercial personal use**; any monetization requires a paid plan. Fine for a prototype, not for a commercial launch.
-- Other static hosts (e.g. Cloudflare Pages, Netlify, GitHub Pages) are viable. Check each provider's current limits and commercial-use terms before choosing — they change.
+- **Hosting:** the app goes on **Vercel** (production from `main`, a preview per PR) and the visitor counter on a **Cloudflare Worker** ([ADR 0009](docs/decisions/0009-hosting-vercel-and-cloudflare.md)). **Neither is deployed yet.** The first-time setup, in order, is in [docs/deployment.md](docs/deployment.md).
+- **CI:** GitHub Actions ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs lint, format check, typecheck, unit tests, the stats service tests, the build and E2E on every PR and push to `main`. Dependabot opens weekly update PRs.
+- **Node:** 24, from `.nvmrc` (`engines` allows 24 or later).
+- **Vercel Hobby** is free but limited to **non-commercial personal use**; any monetization requires a paid plan or another host.
 - A custom domain is optional and is the only expected cost.
-- **Visitor stats:** the counter in [services/stats-counter](services/stats-counter/README.md) is a Cloudflare Worker on the free plan, deployed separately with `wrangler`. Its README has the deploy steps. Set `ALLOWED_ORIGINS` there to the app's origin, deploy, then set `NEXT_PUBLIC_STATS_URL` in the static host's build environment and rebuild.
-
-See [ADR 0002](docs/decisions/0002-no-backend-in-phase-1.md).
 
 ## Documentation
 
@@ -109,6 +108,7 @@ See [ADR 0002](docs/decisions/0002-no-backend-in-phase-1.md).
 | [docs/sound-licensing.md](docs/sound-licensing.md)                                       | Approved sources, asset inventory, adding sounds        |
 | [docs/profiles-and-presets.md](docs/profiles-and-presets.md)                             | Data models, storage, validation, migrations            |
 | [docs/roadmap.md](docs/roadmap.md)                                                       | Phases, stages, Phase 1 definition of done              |
+| [docs/deployment.md](docs/deployment.md)                                                 | CI, Vercel and Worker setup, day-to-day deploys         |
 | [docs/decisions/](docs/decisions/)                                                       | Architecture Decision Records                           |
 | [CLAUDE.md](CLAUDE.md)                                                                   | Working rules for Claude Code in this repo              |
 

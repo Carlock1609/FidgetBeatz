@@ -1,0 +1,27 @@
+# Weekly dependency update PRs. Minor and patch bumps are grouped into one PR per package
+# so the queue stays small; majors arrive one per PR because they need a closer look.
+# Every update still goes through CI and the "No new dependency" rule in CLAUDE.md.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      app-minor-and-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: npm
+    directory: /services/stats-counter
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    groups:
+      stats-minor-and-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

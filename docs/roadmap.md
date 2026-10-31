@@ -60,6 +60,10 @@
 - [x] Docs and ADRs match the implementation; `docs/api.md` documents the stats endpoint contract
 - [ ] Clean-clone setup verified
 - [ ] Summary of shipped features and known limitations
+- [ ] CI and dependency updates: GitHub Actions (lint, format, typecheck, unit, stats service, build, E2E) and Dependabot, Node pinned to 24 (ADR 0009) — workflow added 2026-10-31; **first run on GitHub not yet seen**
+- [ ] App imported into Vercel and live on its production URL ([deployment.md](deployment.md) step 1)
+- [ ] Stats Worker deployed with the production origin allowed, `NEXT_PUBLIC_STATS_URL` set in Vercel, footer shows live numbers (steps 2–3)
+- [ ] `main` protected by required CI checks (step 4)
 
 ## Phase 1 definition of done
 
