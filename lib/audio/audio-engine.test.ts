@@ -140,6 +140,62 @@ describe("AudioEngine", () => {
     expect(engine.activeVoices).toBe(11);
   });
 
+  it("suspends on backgrounding and resumes the same decoded sounds on return", async () => {
+    const { engine, fake, fetchFn } = setup();
+    await engine.preload(["kick"]);
+    await engine.unlock();
+    engine.play("kick");
+
+    engine.setPageHidden(true);
+    expect(fake.ctx.suspend).toHaveBeenCalledOnce();
+    expect(engine.isRunning).toBe(false);
+
+    engine.setPageHidden(false);
+    expect(engine.isRunning).toBe(true);
+    engine.play("kick");
+    expect(fake.started).toHaveLength(2);
+    expect(fetchFn).toHaveBeenCalledOnce();
+  });
+
+  it("retries a rejected resume on the next play gesture", async () => {
+    const { engine, fake } = setup();
+    await engine.preload(["kick"]);
+    fake.ctx.resume.mockRejectedValueOnce(new Error("gesture required"));
+    await expect(engine.unlock()).resolves.toBeUndefined();
+    expect(engine.isRunning).toBe(false);
+
+    engine.play("kick");
+    expect(fake.ctx.resume).toHaveBeenCalledTimes(2);
+    expect(engine.isRunning).toBe(true);
+    expect(fake.started).toHaveLength(1);
+  });
+
+  it("keeps audio initialization lazy if visibility changes before the first gesture", () => {
+    const createContext = vi.fn(() => null);
+    const engine = new AudioEngine({ resolveSound: () => undefined, createContext });
+    engine.setPageHidden(true);
+    engine.setPageHidden(false);
+    expect(createContext).not.toHaveBeenCalled();
+  });
+
+  it("contains rejected visibility transitions and allows the next gesture to recover", async () => {
+    const { engine, fake } = setup();
+    await engine.preload(["kick"]);
+    await engine.unlock();
+    fake.ctx.suspend.mockRejectedValueOnce(new Error("interrupted"));
+    engine.setPageHidden(true);
+    await Promise.resolve();
+
+    fake.ctx.state = "suspended";
+    fake.ctx.resume.mockRejectedValueOnce(new Error("gesture required"));
+    engine.setPageHidden(false);
+    await Promise.resolve();
+    expect(engine.isRunning).toBe(false);
+    engine.play("kick");
+    expect(engine.isRunning).toBe(true);
+    expect(fake.started).toHaveLength(1);
+  });
+
   it("passes a scheduled start time through (Phase 2 sequencing)", async () => {
     const { engine, fake } = setup();
     await engine.unlock();
