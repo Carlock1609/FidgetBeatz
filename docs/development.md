@@ -68,7 +68,7 @@ A change is **not done** until it is verified by a command you actually ran or b
 
 Required test cases (Phase 1): sound assignment; playback initiation; rapid repeated taps; overlapping playback; add/remove pads; reorder (drag + keyboard/move buttons); save & restore profiles; switch presets; invalid stored data; unavailable sound; edit mode enter/save/cancel; responsive layout on a phone viewport.
 
-Playwright can't hear audio. E2E tests assert the engine was **called** (via a test hook on `window`), and a manual device checklist (in `audio-system.md`) covers real playback. Record manual results in the PR.
+Playwright can't hear audio. E2E tests assert the engine reached `source.start()` (via the LCD’s `data-last-sound` attribute), and a manual device checklist (in `audio-system.md`) covers real playback. Record manual results in the PR.
 
 Preset integrity test: every preset references existing sound ids, ids are unique, pad counts are within limits.
 
@@ -87,3 +87,7 @@ Expected Phase 1 runtime deps: `next`, `react`, `react-dom`, `tailwindcss` (+ it
 - [ ] Docs updated; ADR added if a decision changed
 - [ ] New audio assets listed in the inventory with a verified license
 - [ ] Checked on a phone-sized viewport; reduced-motion respected
+
+## 10. Release readiness
+
+See [release-readiness.md](release-readiness.md) for fresh-clone verification and known limitations. Tailwind uses a shared PostCSS pipeline; `npm run build -- --webpack` is available as a diagnostic fallback while the default build remains Turbopack.
