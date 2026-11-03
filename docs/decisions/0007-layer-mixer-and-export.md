@@ -3,6 +3,8 @@
 - **Status:** Proposed (Phase 2 — not built in Phase 1)
 - **Date:** 2026-10-18
 
+> **2026-11-02 scope revision:** event recording and offline WAV rendering remain the proposed technical approach. The loop-only duration, mandatory count-in, save UI and panel layout below are historical proposals, not finalized requirements. [Studio discovery](../studio.md) and addendum A7 take precedence; the agreed model is now one shared project loop of any positive duration up to 60 seconds and up to 30 layers, including sparse hits. The historical 8-layer limit and bar-only duration below are superseded.
+
 ## Context
 
 Users want to record loops, stack up to ~8 layers, then save and download the beat. Constraints: client-only, $0, simple UI, mobile-friendly.

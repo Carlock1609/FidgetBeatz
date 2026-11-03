@@ -11,6 +11,12 @@ How FidgetBeatz gets from a commit to the web, following [ADR 0009](decisions/00
 | Checks                      | GitHub Actions (`.github/workflows/ci.yml`)  | Every PR and every push to `main`                                                 |
 | Dependency updates          | Dependabot (`.github/dependabot.yml`)        | Weekly PRs for both npm packages and the Actions versions; they go through CI too |
 
+## Verification — 2026-11-02
+
+- Live HTTPS check: `fidgetbeatz.com` returned 200; `www.fidgetbeatz.com` returned 308 to the apex domain.
+- `stats.fidgetbeatz.com` did not resolve from this environment; stats deployment/connection remains unverified and open.
+- GitHub repository rulesets API returned an empty list. Classic branch protection was not inspected, so required-check enforcement is still unverified.
+
 ## What CI runs
 
 Three jobs, matching the pre-merge checklist in [development.md](development.md):
