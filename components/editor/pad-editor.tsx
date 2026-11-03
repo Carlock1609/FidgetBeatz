@@ -2,6 +2,7 @@
 
 import { ArrowLeft, ArrowRight, Play, Trash2 } from "lucide-react";
 import { useCallback } from "react";
+import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useBoardDispatch, useBoardState } from "@/features/soundboard/board-provider";
@@ -26,9 +27,9 @@ export function PadEditor() {
   const preview = useCallback(
     (soundId: SoundId) => {
       void engine.unlock();
-      void engine.preload([soundId]).then(() => engine.play(soundId));
+      void engine.preload([soundId]).then(() => engine.play(soundId, { gain: pad?.volume ?? 1 }));
     },
-    [engine],
+    [engine, pad?.volume],
   );
 
   const close = () => dispatch({ type: "selectPad", padId: null });
@@ -84,6 +85,31 @@ export function PadEditor() {
                 onChange={(soundId) => dispatch({ type: "assignSound", padId: pad.id, soundId })}
                 onPreview={preview}
               />
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between text-xs text-muted">
+                <span id="pad-volume-label">Pad volume</span>
+                <output>{Math.round((pad.volume ?? 1) * 100)}%</output>
+              </div>
+              <Slider
+                aria-label="Pad volume"
+                aria-labelledby="pad-volume-label"
+                min={0}
+                max={200}
+                step={1}
+                value={[Math.round((pad.volume ?? 1) * 100)]}
+                onValueChange={([value]) =>
+                  dispatch({
+                    type: "setPadVolume",
+                    padId: pad.id,
+                    volume: (value ?? 100) / 100,
+                  })
+                }
+              />
+              <p className="text-xs text-muted">
+                Balance this pad against the others. 100% is the original level.
+              </p>
             </div>
 
             <fieldset>

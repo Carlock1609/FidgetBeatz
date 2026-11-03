@@ -539,3 +539,24 @@ test.describe("phone layout", () => {
     });
   }
 });
+
+test("pad volume saves, persists and leaves other pads unchanged", async ({ page }) => {
+  await open(page);
+  await page.getByRole("button", { name: "Edit pads" }).click();
+  await page.getByTestId("edit-pad").first().click();
+  const volume = page.getByRole("slider", { name: "Pad volume" });
+  await volume.focus();
+  await volume.press("Home");
+  await volume.press("ArrowRight");
+  await expect(volume).toHaveAttribute("aria-valuenow", "1");
+  await page.getByRole("button", { name: "Done" }).click();
+  await page.getByRole("button", { name: "Save", exact: true }).click();
+  await page.reload();
+  await expect(pads(page)).toHaveCount(12);
+  await page.getByRole("button", { name: "Edit pads" }).click();
+  await page.getByTestId("edit-pad").first().click();
+  await expect(volume).toHaveAttribute("aria-valuenow", "1");
+  await page.getByRole("button", { name: "Done" }).click();
+  await page.getByTestId("edit-pad").nth(1).click();
+  await expect(volume).toHaveAttribute("aria-valuenow", "100");
+});

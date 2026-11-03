@@ -14,6 +14,12 @@ function createFakeContext() {
     linearRampToValueAtTime: vi.fn(),
   });
   const node = () => ({ connect: vi.fn(), disconnect: vi.fn() });
+  const analyser = {
+    ...node(),
+    fftSize: 2048,
+    getFloatTimeDomainData: vi.fn((samples: Float32Array) => samples.fill(0.25)),
+  };
+  const gains: { gain: ReturnType<typeof param> }[] = [];
   const ctx = {
     state: "suspended" as AudioContextState,
     currentTime: 1.5,
@@ -37,7 +43,12 @@ function createFakeContext() {
       attack: param(),
       release: param(),
     }),
-    createGain: () => ({ ...node(), gain: param() }),
+    createAnalyser: () => analyser,
+    createGain: () => {
+      const gain = { ...node(), gain: param() };
+      gains.push(gain);
+      return gain;
+    },
     createBufferSource: () => {
       const source = {
         ...node(),
@@ -49,7 +60,7 @@ function createFakeContext() {
       return source;
     },
   };
-  return { ctx, started, stopped };
+  return { ctx, started, stopped, analyser, gains };
 }
 
 const catalog: Record<string, Sound> = {
@@ -271,4 +282,31 @@ describe("AudioEngine", () => {
     await engine.preload(["kick"]);
     expect(statuses).toEqual(["kick:loading", "kick:ready"]);
   });
+});
+
+it("meters the post-limiter waveform and stays dark when muted or suspended", async () => {
+  const { engine, fake } = setup();
+  expect(engine.getOutputLevel()).toBe(0);
+  await engine.unlock();
+  expect(engine.getOutputLevel()).toBe(0.25);
+  expect(fake.analyser.connect).toHaveBeenCalledWith(fake.ctx.destination);
+  engine.setMasterVolume(0);
+  expect(engine.getOutputLevel()).toBe(0);
+  engine.setMasterVolume(0.5);
+  expect(fake.gains[0]!.gain.setTargetAtTime).toHaveBeenCalledWith(0.5, fake.ctx.currentTime, 0.02);
+  fake.analyser.getFloatTimeDomainData.mockImplementation((samples) => samples.fill(-0.125));
+  expect(engine.getOutputLevel()).toBe(0.125);
+  await engine.setPageHidden(true);
+  expect(engine.getOutputLevel()).toBe(0);
+});
+
+it("applies per-pad gain separately from master volume", async () => {
+  const { engine, fake } = setup();
+  await engine.unlock();
+  await engine.preload(["kick"]);
+  engine.setMasterVolume(0.4);
+  engine.play("kick", { gain: 0.3 });
+  expect(fake.gains[1]!.gain.value).toBe(0.3);
+  engine.play("kick", { gain: 0 });
+  expect(fake.gains[2]!.gain.value).toBe(0);
 });
