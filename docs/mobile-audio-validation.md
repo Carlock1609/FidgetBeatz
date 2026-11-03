@@ -1,6 +1,6 @@
 # Mobile audio validation
 
-Status: automated lifecycle coverage added; physical-device validation pending. This task is not complete until audible behavior has been checked on phones.
+Status: automated lifecycle coverage added; owner reports the requested iPhone Safari playback checks work well. Android and additional manual checks remain pending.
 
 ## Automated coverage
 
@@ -38,3 +38,11 @@ Run `npm run test` for engine coverage and `npm run test:e2e` for the production
 - `npm run build -- --webpack`: passed (diagnostic alternative; default Turbopack remains blocked by local port permissions).
 - `npx playwright test` against that export: 67 passed, 12 intentionally skipped, 2 failed. Both failures are desktop keyboard accessibility checks (Focus mode ring detection and keyboard pad movement) and belong to the separate usability/accessibility task. Mobile Chromium and WebKit projects had no failures.
 - This does not establish audible performance or physical-device behavior. iPhone 17 Pro Max owner checks and Android testing remain pending.
+
+## Owner-reported iPhone result — 2026-11-02
+
+Device: iPhone 17 Pro Max, Safari; iOS version and output device not supplied. Asked to test first tap, 30 seconds of rapid tapping, two-finger overlap, app switching and lock/unlock recovery. Owner response: “works great.” Recorded as an overall positive result for that requested pass, not a measured latency result or separate detailed observations for every check. Silent mode, preset switching, Android and desktop listening checks remain unverified.
+
+## Build diagnosis follow-up
+
+PR #14 replaces the Turbopack-only CSS loader with the documented shared PostCSS setup. The two desktop failures above came from a diagnostic Webpack export missing Tailwind utilities. On the corrected pipeline, both default Turbopack and Webpack builds succeeded and all 69 applicable browser checks passed (12 platform-specific skips). The initial failures are not confirmed product accessibility regressions.
