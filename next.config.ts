@@ -27,14 +27,6 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_APP_COMMIT: process.env.NEXT_PUBLIC_APP_COMMIT ?? readCommit(),
     NEXT_PUBLIC_BUILD_DATE: new Date().toISOString(),
   },
-  turbopack: {
-    rules: {
-      "*.css": {
-        loaders: ["@tailwindcss/turbopack"],
-        as: "*.css",
-      },
-    },
-  },
 };
 
 export default nextConfig;
