@@ -4,7 +4,7 @@
 
 **Current stage:** Phase 1 device validation and deployment follow-up; Phase 2 Studio feature/design discovery. Priorities revised 2026-11-02. Guided play is on hold.
 
-**Working order:** validate mobile playback → resolve Studio behavior and mobile Figma references → build Studio recording/export → Phase 3 accounts and community. Deployment follow-ups remain tracked separately; the main site is already live.
+**Working order:** validate mobile playback → resolve Studio behavior and mobile Figma references → build Studio recording/export → Phase 3 accounts and community → Phase 4 custom sounds. Deployment follow-ups remain tracked separately; the main site is already live.
 
 ## Phase 1 — Core soundboard
 
@@ -75,14 +75,16 @@ Everything in the original spec §22, plus the addendum: sound display, focus mo
 
 Priority over guided play. See [studio.md](studio.md) and [ADR 0007](decisions/0007-layer-mixer-and-export.md).
 
-- Dedicated mobile-first Studio page; layout to be explored with Figma references before implementation.
+- Dedicated mobile-first Studio workspace; compact recording strip and expanded layer timeline under exploration in Figma before implementation.
+- Proposed visual update: black/white/neutral chrome, user-selectable pad colors; see [Studio Figma brief](studio-figma-brief.md).
 - Shared project loops of any positive duration up to 60 seconds; set duration upfront or establish it by stopping the first take. Timeline with hit markers and moving red playhead.
 - Record layers while previous layers play; switch soundboard presets between takes.
 - Up to 30 layers, including sparse one-hit layers; mute, volume, delete and re-record. Validate performance on real phones.
 - Tempo/count-in; optional snap. All layers use the same project duration; stopping a later take does not shorten it.
 - Automatic local project recovery; download mixed WAV. No accounts or cloud saving required.
 - Configurable limits and expandable layout: design for at least 60 layers and longer future songs without changing the initial 30-layer/60-second defaults.
-- Defer individual-note editing, clip trimming and arrangement tools.
+- Design a focused single-hit editor: select/delete a hit, adjust timing with drag and precise alternatives, and undo; layer clearing is distinct from resetting the project. Final interactions require Figma review.
+- Defer clip trimming, cross-layer hit movement and advanced arrangement tools.
 
 ## Phase 3 — Accounts, saved songs and community (not started)
 
@@ -92,10 +94,20 @@ Priority over guided play. See [studio.md](studio.md) and [ADR 0007](decisions/0
 - Up/down voting and highlighted/top-voted songs.
 - Define storage, costs, licensing, moderation and voting rules during feature discovery.
 
+## Phase 4 — Custom sounds and sampling (not started)
+
+Planned before guided play; separate from the initial Studio release.
+
+- Record original sounds using the device microphone; store and reuse them on pads and in Studio layers.
+- Import user-owned audio files as custom sounds; formats and limits to be decided.
+- Define browser-local storage first versus account sync during discovery; do not assume uploads are public or automatically cloud-saved.
+- Plan microphone permission/denial, basic trim/normalization, storage quotas, deleting a sound referenced by a project, and portable/recoverable project dependencies.
+- Review licensing, privacy and moderation before cloud storage or community publishing of custom audio.
+
 ## On hold — Guided play
 
 Pads light up to guide users through original or public-domain songs. No longer Phase 3; no implementation scheduled.
 
 ## Later (unscheduled)
 
-User audio uploads and extra sound packs; cost and licensing review before implementation.
+Extra sound packs; cost and licensing review before implementation. Custom recording/import now belongs to Phase 4 above.
