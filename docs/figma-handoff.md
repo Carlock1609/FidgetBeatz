@@ -1,13 +1,13 @@
-# Figma Handoff
+# Figma References and Design Updates
 
 > **Figma file:** `<PASTE PUBLISHED FIGMA LINK HERE>`
-> Fill this in before Stage 2. The Figma file is the visual source of truth; these docs describe behavior.
+> Current references still need to be recorded. The shipped soundboard is the baseline; use Figma for deliberate updates and mobile Studio exploration, not a mandatory redesign.
 >
 > **2026-10-18:** no link was available when Phase 1 was built, so the UI follows the A + C Hybrid baseline in `design-system.md`. When the link is added, compare each frame below against the running app and update tokens in `app/globals.css`.
 
 ## How to use the Figma file
 
-1. **Preferred:** connect the Figma connector (MCP) in Claude Code. It can read the design context, screenshots and variable definitions straight from the file.
+1. If a Figma connection is available in the current workflow, use it to read design context, screenshots and variables.
 2. **Otherwise:** export screenshots of each frame into `docs/design/` and copy the variables (colors, type, radii, spacing) into `docs/design-system.md` by hand.
 3. If Figma generated code (e.g. Figma Make), treat it as a **visual reference only**. Rebuild the components to this repo's architecture and standards rather than pasting generated code in.
 
@@ -22,7 +22,7 @@
 | Sound display            | `components/soundboard/sound-display.tsx`                                                     |
 | Footer (stats + version) | `components/shell/app-footer.tsx`                                                             |
 | Focus mode               | `components/soundboard/focus-mode-toggle.tsx` + layout state                                  |
-| Mixer, export sheet      | Phase 2 — don't build yet                                                                     |
+| Mixer, export sheet      | Phase 2 — mobile Studio discovery; see `studio.md`                                            |
 
 ## Frame checklist (Phase 1)
 

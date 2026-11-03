@@ -54,3 +54,22 @@ This addendum records requirements added after the original spec (`product-spec.
 - Focus mode toggles on and off and works on phone and desktop.
 - The version chip shows the real build version.
 - Stats show live numbers, or a graceful offline state.
+
+## A7. Revised priorities and Studio scope — 2026-11-02
+
+This section supersedes A6 and the original spec's Phase 2/3 ordering where they conflict.
+
+- Phase 2 is a mobile-first Studio for loops of any positive duration up to 60 seconds, with up to 30 layers, local recovery and WAV download. See [studio.md](studio.md) for accepted scope and unresolved behavior.
+- Accounts are not required for Studio. Existing profiles remain browser-local board configurations.
+- Phase 3 covers accounts, editable cloud-saved songs, community sharing, voting and highlights.
+- Guided play is on hold, with no scheduled phase.
+- Existing soundboard design is the baseline; explore mobile Studio layouts in Figma before implementation. Missing historical Figma references are not a release blocker.
+- Release readiness replaces the old handoff label. Setup verification and known limitations remain useful regardless of which assistant is used.
+
+### A7 recording clarification
+
+Users choose the project duration upfront or establish it by stopping the first recording (60-second maximum). All layers share that duration. Later takes may contain sparse hits or stop early without shortening the project: a 30-second drumline can accompany a layer containing only one sound at second 16. The complete project repeats; short layers do not repeat independently. Thirty layers is the product target, subject to real-phone performance validation, not a promise of 30 simultaneous voices. See Studio discovery for capture-boundary behavior and remaining design questions.
+
+### A7 expandable limits
+
+The initial 30-layer and 60-second caps must be configurable release defaults. Build project data, validation, recovery, playback/export and UI around configurable limits rather than hardcoded assumptions. Design layer navigation to accommodate at least 60 layers and timelines to accommodate longer future songs without a structural redesign. Increasing shipped caps requires performance and compatibility validation, especially on phones. See [Studio discovery](studio.md#expandable-limits-and-layout).
