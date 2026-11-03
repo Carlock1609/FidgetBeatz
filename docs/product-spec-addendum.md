@@ -84,4 +84,10 @@ The initial 30-layer and 60-second caps must be configurable release defaults. B
 
 ### A8 navigation confirmation
 
-The owner approved the Pads ↔ expanded layer timeline flow: Pads focuses on a specific selected layer; “Expand layer timeline” shows all layers; selecting a layer and choosing “Return to pads” focuses that layer for further work. Selection/view switching is non-destructive and does not start recording. Adding hits versus replacing an existing take remains to be decided; individual-hit and clip editing remain deferred. Exact Figma layout and recording-interruption behavior still need review.
+The owner approved the Pads ↔ expanded layer timeline flow: Pads focuses on a specific selected layer; “Expand layer timeline” shows all layers; selecting a layer and choosing “Return to pads” focuses that layer for further work. Selection/view switching is non-destructive and does not start recording. Adding hits versus replacing an existing take remains to be finalized. Single-hit correction is now included in A9 design discovery; clip editing remains deferred. Exact Figma layout and recording-interruption behavior still need review.
+
+## A9. Hit correction and saved design handoff — 2026-11-02
+
+This supersedes earlier statements deferring all individual-hit editing. Include selecting/deleting an individual hit and correcting its timing in the Studio design scope. Explore horizontal dragging in a focused, zoomable layer editor, plus accessible Earlier/Later and precise-time alternatives. Include undo and safe Clear layer behavior. The overview should not require dragging tiny markers across a full-minute timeline. Do not automatically remove nearby hits when recording; Add hits versus Replace take must be explicit. Exact controls, timing precision, recording/playback edit rules and undo behavior require design agreement.
+
+This PR is documentation and saved design references only. Figma will produce frames/prototypes before app implementation. The original silent HTML concept is preserved under `docs/design/studio/concepts/`; it predates the hit-editor exploration, so use the current Studio specification and Figma brief for later behavior.

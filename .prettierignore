@@ -8,3 +8,7 @@ playwright-report
 data/sounds/inventory.json
 .claude
 .wrangler
+
+# Preserve the reviewed design snapshot and its generated standalone wrapper.
+docs/design/studio/concepts/studio-views.fragment.html
+docs/design/studio/concepts/studio-views.html

@@ -83,7 +83,8 @@ Priority over guided play. See [studio.md](studio.md) and [ADR 0007](decisions/0
 - Tempo/count-in; optional snap. All layers use the same project duration; stopping a later take does not shorten it.
 - Automatic local project recovery; download mixed WAV. No accounts or cloud saving required.
 - Configurable limits and expandable layout: design for at least 60 layers and longer future songs without changing the initial 30-layer/60-second defaults.
-- Defer individual-note editing, clip trimming and arrangement tools.
+- Design a focused single-hit editor: select/delete a hit, adjust timing with drag and precise alternatives, and undo; layer clearing is distinct from resetting the project. Final interactions require Figma review.
+- Defer clip trimming, cross-layer hit movement and advanced arrangement tools.
 
 ## Phase 3 — Accounts, saved songs and community (not started)
 

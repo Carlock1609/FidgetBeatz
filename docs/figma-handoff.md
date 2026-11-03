@@ -47,3 +47,7 @@ Any frame missing from Figma: follow `design-system.md` and note the gap in the 
 ## Studio and color-update discovery
 
 Use [studio-figma-brief.md](studio-figma-brief.md) for the next design session. Start with the supplied Ableton Note reference for pad interaction/event-strip inspiration; explore recording, expanded layers and recording focus before selecting a mobile layout. Use monochrome chrome with pad-focused colors, and include a sparse one-hit layer plus a 60-layer stress example. No generated design is approved for implementation automatically.
+
+### Saved concepts
+
+The original Studio HTML concept is versioned in [design/studio/concepts/](design/studio/concepts/README.md). Open its standalone preview to inspect Pads ↔ expanded timeline navigation, and read the current Figma brief for the newer hit-correction requirements. These files are design references only; no Studio implementation is authorized by this documentation PR.

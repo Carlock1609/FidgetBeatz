@@ -11,7 +11,7 @@ Status: scope agreed in conversation on 2026-11-02; not implemented. Behavior an
 - Tempo/count-in and optional snap; exact controls need design.
 - Automatic local recovery of editable projects, with no account or server storage required.
 - Record sound-trigger events and layer settings, then render the mix locally for export; a WAV is finished audio, not an editable project.
-- Defer individual-note editing, clip trimming and advanced arrangement tools.
+- Include focused single-hit correction in the design scope: select/delete a hit and adjust its timing, with undo. Exact interactions await Figma review. Clip trimming and advanced arrangement tools remain deferred.
 
 ## Recording and loop behavior
 
@@ -22,6 +22,25 @@ Status: scope agreed in conversation on 2026-11-02; not implemented. Behavior an
 - Existing layers play during a new take. For the first version, capture one pass and stop capture at the project boundary; ongoing playback can loop without repeatedly recording extra hits. Distinguish take completion from stopping playback in the eventual UI.
 - A short layer does not independently repeat within the project; independent layer lengths and repeat regions are deferred.
 - Target 30 layers, including sparse accent/effect layers. Validate dense playback, local recovery and export on real phones before shipping. Layer count is separate from simultaneous audio voices; the existing engine's voice cap must be reviewed against realistic mixes.
+
+## Hit correction and layer reset — proposed design scope
+
+This expands the earlier blanket deferral of individual-hit editing. The owner raised correcting an off-time hit without having to replace the entire layer. Design these flows in Figma before implementation; the saved HTML concept predates them and does not demonstrate hit editing.
+
+- Select a layer in the expanded timeline, then open an explicit **Edit hits** view for that layer. Explore per-pad/sound lanes and a hit list/inspector so mixed sounds and overlapping timestamps can be distinguished.
+- Select a specific hit to show its sound name and timestamp, with **Delete hit**, **Earlier/Later** timing controls, and an editable time field or equivalently precise accessible control. The user can remove the bad hit and record a replacement, or move that existing hit to correct its timing without recording again.
+- Explore horizontal drag-to-retime in the focused layer editor, with zoom and optional snap. Do not require dragging a tiny marker in the full 60-second overview. Provide touch, keyboard and non-drag alternatives. Do not introduce cross-layer movement or change the sound/pitch when dragging vertically in this first scope.
+- Select events by stable identity, not sound/time alone: two hits can have the same sound and timestamp, and deleting one must not delete both. The editable storage model will need stable event identifiers; no schema/code change is made in this PR.
+- Aiming at a dense cluster should reveal a zoomed view or a selectable hit list, not silently choose an arbitrary event. The thin Pads strip stays an overview; design a clear route into Edit hits instead of crowding it with tiny editing handles.
+- **Undo** must recover accidental hit deletion and timing changes. Show the before/after state and audition the correction. Define exact undo scope, optional redo and history persistence during design/technical discovery; do not imply unlimited or cross-session undo.
+- **Clear layer** removes that layer's events while preserving its name/settings and shared project duration, with confirmation or a clearly recoverable undo flow. It is distinct from Delete layer, replacing a take, resetting a board/preset and starting a new project. Full-project clearing requires a separate explicit action and confirmation.
+- Existing-layer recording should offer clearly distinguished **Add hits** (preserve existing events) and **Replace take** (explicit destructive replacement with a safeguard) as the recommended Figma exploration. No automatic deletion of nearby events when recording a replacement: close-together hits may be intentional. Exact default/mode naming still needs agreement.
+- Merely selecting a hit/layer, changing views, or tapping a pad for audition must not mutate recorded events. Recording changes happen only after explicit arming/Record. Propose disabling hit mutations while a take is recording; define whether edits during playback are allowed before implementation.
+- Timing edits affect only that event's start time, leaving the shared project length and other layers unchanged. Optional snap must be explicit; don't silently quantize the original performance. Define timing precision, loop-boundary behavior and treatment of currently sounding tails before implementation.
+
+## Saved concept and handoff
+
+The reviewed Pads/expanded-timeline concept is committed in [design/studio/concepts/](design/studio/concepts/README.md), with editable source and a standalone browser preview. It is a silent visual reference, not Studio code or proof of timing/audio behavior. It does not implement the newly proposed hit editor. The Figma brief and this document are authoritative for newer requirements.
 
 ## Expandable limits and layout
 
@@ -41,7 +60,7 @@ The initial 30-layer and 60-second limits are release defaults, not permanent ar
 2. Pads ↔ expanded timeline navigation is agreed. Resolve exact mobile proportions, expansion treatment and landscape layout in Figma.
 3. Define local recovery limits, clearing a project, navigation warnings and recovery failure behavior.
 4. Define end-of-song audio tails, export volume and clipping, and interrupted/background recording behavior.
-5. Define minimum controls for the first release and verify recording/export performance on real phones.
+5. Finalize Add hits/Replace take behavior, hit editor precision/zoom, undo scope and edit-during-playback rules; validate recording/export performance on real phones.
 
 ## Visual direction and layout exploration — 2026-11-02
 
@@ -53,7 +72,7 @@ Accepted navigation, with remaining presentation details for Figma review:
 
 - One Studio workspace with two complementary views: Pads (focused on one selected layer) and Layers (expanded timeline of all layers). Use explicit “Expand layer timeline” and “Return to pads” actions. Switching views alone preserves the project, playhead and playback; selection is distinct from arming a recording.
 - In Layers, selecting a row sets the layer that Pads will focus on when the user chooses “Return to pads”. Show its name and existing hits clearly. Selecting or navigating never erases events, records hits or replaces a take.
-- Returning to Pads is the entry point for working on that layer. Supported initial controls remain mute, volume, delete and re-record. Whether recording an existing layer adds hits (overdub), replaces the take, or offers both is still an explicit product decision. Existing individual-hit movement/deletion and clip editing remain deferred.
+- Returning to Pads is the entry point for working on that layer. Supported initial controls remain mute, volume, delete and re-record. Whether recording an existing layer adds hits (overdub), replaces the take, or offers both is still an explicit product decision. Single-hit deletion/timing correction is now part of the design exploration below; clip editing remains deferred.
 - Record view dedicates a compact top region to Play/Stop/Record, elapsed/project time, selected/armed layer and its event overview. Pads retain most of the remaining space.
 - A clearly labeled Layers/Expand action opens an expanded timeline view with aligned layer rows and one shared time ruler/playhead. Avoid a dropdown menu for inspecting 30–60 temporal rows. Compare an expanding panel against a full-height view in Figma before deciding.
 - Use discrete hit markers at actual trigger times rather than a filled 60-second block or fabricated waveform. A layer with one hit at second 16 stays mostly empty; show the hit position and a readable summary such as “1 hit · 0:16”. Sound tails may outlast a trigger; any tail rendering must be visually distinct and based on actual audio duration.
