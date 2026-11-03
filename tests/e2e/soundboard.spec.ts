@@ -490,3 +490,52 @@ test("without reduced motion a hit does scale the pad (control for the tests abo
   const seen = await sampleTransforms(page, '[data-testid="pad"]', 250, "pointerdown");
   expect(seen.some((t) => t !== "none")).toBe(true);
 });
+
+test.describe("phone layout", () => {
+  test.beforeEach(({ isMobile }) => {
+    test.skip(!isMobile, "phone portrait/landscape checks target touch projects");
+  });
+
+  for (const viewport of [
+    { name: "portrait", width: 393, height: 852 },
+    { name: "landscape", width: 852, height: 393 },
+  ]) {
+    test(`${viewport.name}: pads and mode controls remain reachable`, async ({ page }) => {
+      await page.setViewportSize({ width: viewport.width, height: viewport.height });
+      await open(page);
+      await settle(page);
+      for (const preset of ["Classic Drums", "Electronic"]) {
+        if (preset === "Electronic") {
+          await page.getByRole("button", { name: "Electronic", exact: true }).click();
+          await expect(pads(page)).toHaveCount(16);
+          await settle(page);
+        }
+        for (const pad of await pads(page).all()) {
+          await expect(pad).toBeInViewport({ ratio: 1 });
+          const box = await pad.boundingBox();
+          expect(box!.width).toBeGreaterThanOrEqual(64);
+          expect(box!.height).toBeGreaterThanOrEqual(64);
+        }
+      }
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+        viewport.width,
+      );
+      await page.getByRole("button", { name: "Focus mode", exact: true }).click();
+      const exit = page.getByRole("button", { name: "Exit focus mode", exact: true });
+      await expect(exit).toBeInViewport({ ratio: 1 });
+      await exit.click();
+      await page.getByRole("button", { name: "Edit pads" }).click();
+      await expect(page.getByRole("button", { name: "Save", exact: true })).toBeInViewport({
+        ratio: 1,
+      });
+      await expect(page.getByRole("button", { name: "Cancel", exact: true })).toBeInViewport({
+        ratio: 1,
+      });
+      await page.getByTestId("edit-pad").first().click();
+      const sheet = page.getByRole("dialog", { name: "Edit pad" });
+      await expect(sheet).toBeVisible();
+      await sheet.getByRole("button", { name: "Close", exact: true }).click();
+      await expect(sheet).toBeHidden();
+    });
+  }
+});
