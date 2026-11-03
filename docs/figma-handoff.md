@@ -43,3 +43,7 @@ Any frame missing from Figma: follow `design-system.md` and note the gap in the 
 - Match Figma's tokens exactly; don't invent new colors.
 - Where Figma conflicts with accessibility (contrast, 44 px targets, focus rings), accessibility wins. Note the deviation.
 - Animations follow `design-system.md` timings even if the prototype differs.
+
+## Studio and color-update discovery
+
+Use [studio-figma-brief.md](studio-figma-brief.md) for the next design session. Start with the supplied Ableton Note reference for pad interaction/event-strip inspiration; explore recording, expanded layers and recording focus before selecting a mobile layout. Use monochrome chrome with pad-focused colors, and include a sparse one-hit layer plus a 60-layer stress example. No generated design is approved for implementation automatically.

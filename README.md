@@ -19,7 +19,7 @@ FidgetBeatz is a mobile-first, browser-based beat-making playground. Tap colorfu
 - **Live stats + version** — "visitors now", total page visits, and the app version in the footer.
 - **Near-zero running cost** — 103 bundled sounds, synthesized in-house and released CC0 ([ADR 0008](docs/decisions/0008-synthesized-sound-library.md)), played through the Web Audio API. No database, no auth, no paid APIs; the only external service is a small free visitor counter (ADR 0006).
 
-Planned Phase 2: a **mobile-first Studio** for loops up to 60 seconds with up to 30 layers, local recovery and WAV download. Phase 3: accounts, cloud-saved songs and community sharing/voting. Guided play is on hold. See [docs/roadmap.md](docs/roadmap.md) and [Studio discovery](docs/studio.md).
+Planned Phase 2: a **mobile-first Studio** for loops up to 60 seconds with up to 30 layers, local recovery and WAV download. Phase 3: accounts, cloud-saved songs and community sharing/voting. Phase 4 adds custom sound recording/storage for use on pads and in Studio, before guided play (on hold). See [docs/roadmap.md](docs/roadmap.md) and [Studio discovery](docs/studio.md).
 
 **Design:** existing UI is the baseline; current Figma references and Studio layout work are tracked in [docs/figma-handoff.md](docs/figma-handoff.md).
 

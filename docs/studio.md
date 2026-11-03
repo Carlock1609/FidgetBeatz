@@ -43,10 +43,29 @@ The initial 30-layer and 60-second limits are release defaults, not permanent ar
 4. Define end-of-song audio tails, export volume and clipping, and interrupted/background recording behavior.
 5. Define minimum controls for the first release and verify recording/export performance on real phones.
 
+## Visual direction and layout exploration — 2026-11-02
+
+Requested direction: mostly black, white and neutral grays. Keep expressive color primarily on individual pads, with user-selectable pad colors (existing color choices remain a baseline; arbitrary color input is not yet a requirement). Exact tokens, contrasts and hit states will be agreed in Figma before implementation. Avoid preset-wide colored background glows in the proposed redesign. Small functional recording/playhead color is an exploration question, not a final token decision.
+
+The supplied Ableton Note screenshot is inspiration for a compact event strip immediately above playable pads and visible hit feedback. It does not establish a complete multilayer layout and should not be copied wholesale.
+
+Proposed flow for review, not approved implementation:
+
+- One Studio workspace with two complementary views: Record (pads first) and Layers (expanded timeline). Navigation preserves the same project, playhead, playback and armed layer.
+- Record view dedicates a compact top region to Play/Stop/Record, elapsed/project time, selected/armed layer and its event overview. Pads retain most of the remaining space.
+- A clearly labeled Layers/Expand action opens an expanded timeline view with aligned layer rows and one shared time ruler/playhead. Avoid a dropdown menu for inspecting 30–60 temporal rows. Compare an expanding panel against a full-height view in Figma before deciding.
+- Use discrete hit markers at actual trigger times rather than a filled 60-second block or fabricated waveform. A layer with one hit at second 16 stays mostly empty; show the hit position and a readable summary such as “1 hit · 0:16”. Sound tails may outlast a trigger; any tail rendering must be visually distinct and based on actual audio duration.
+- Selecting a layer reveals its pad/sound hit breakdown or inspector without expanding every layer at once. A layer can contain multiple pads; layer rows are not inherently one instrument or one color.
+- Keep layer mute, volume, delete and re-record discoverable; distinguish selected, muted, playing and armed/recording states with labels/icons as well as color.
+- Compare Studio focus mode (hide editing chrome but retain transport, timing, armed layer and exit) with the existing pad-only soundboard focus mode. Do not silently redefine the current mode; test the two contexts explicitly.
+- Stress-test 30/60-layer scrolling, sparse events and dense event clusters; portrait and landscape must keep controls reachable and pad targets usable.
+
+See [studio-figma-brief.md](studio-figma-brief.md) for the ready-to-use design prompt. These notes are design discovery only; the production UI is unchanged.
+
 ## Design preparation
 
 Collect mobile music-making references and current Figma designs. A future Figma prompt should cover idle, count-in, recording, playback, layer management, recovery and export states, including portrait and landscape layouts. Do not build additional pages until the core recording model and layout are agreed.
 
 ## Next phases
 
-Phase 3: accounts, richer user profiles, editable cloud-saved songs, community publishing, voting and highlights. Existing browser-local soundboard profiles are separate from user accounts. Guided play is on hold.
+Phase 3: accounts, richer user profiles, editable cloud-saved songs, community publishing, voting and highlights. Existing browser-local soundboard profiles are separate from user accounts. Phase 4 adds custom microphone-recorded/imported sounds that can be stored and reused in pads and Studio. Local versus cloud storage and editing details remain open. Guided play stays on hold and must follow custom sounds.

@@ -73,3 +73,11 @@ Users choose the project duration upfront or establish it by stopping the first 
 ### A7 expandable limits
 
 The initial 30-layer and 60-second caps must be configurable release defaults. Build project data, validation, recovery, playback/export and UI around configurable limits rather than hardcoded assumptions. Design layer navigation to accommodate at least 60 layers and timelines to accommodate longer future songs without a structural redesign. Increasing shipped caps requires performance and compatibility validation, especially on phones. See [Studio discovery](studio.md#expandable-limits-and-layout).
+
+## A8. Monochrome design exploration and custom sounds — 2026-11-02
+
+- The next visual update should use predominantly black/white/neutral chrome, keeping expressive color primarily on user-colorable pads. This is a requested future direction; the implemented Phase 1 palette and category defaults remain documented as the shipped baseline until Figma approval and implementation.
+- Explore a compact top transport/event strip above the pads and a separate expanded layer timeline within one Studio workspace. No mobile layout is approved yet. Sparse one-hit layers must show their actual timing; a layer may contain multiple pad sounds.
+- Studio recording focus must retain essential recording state and controls; its precise relationship to existing pad-only focus mode needs design agreement.
+- Phase 4 is custom sounds: record microphone audio, store it, optionally import audio, and reuse sounds on pads/in Studio. Discover permission, storage, dependency recovery and licensing behavior before implementation. Cloud/account sync is not implied.
+- Phase order is Studio (2), accounts/community (3), custom sounds (4), then guided play when scheduled. Custom sounds must precede guided play.

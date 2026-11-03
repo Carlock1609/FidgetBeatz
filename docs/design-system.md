@@ -4,6 +4,10 @@
 >
 > **Implemented (2026-10-18)** from this baseline: tokens live in `app/globals.css` (`:root` variables → Tailwind `@theme`), and pad states are CSS driven by data attributes (`data-hit`, `data-selected`, `data-dragging`, `data-missing`, `data-color`). No Figma values have been applied yet.
 
+## Requested next direction — design discovery only
+
+As of 2026-11-02, the owner wants predominantly black/white/neutral app chrome and expressive color primarily on individual pads, with selectable pad colors. Plan Studio and soundboard color updates together in Figma. The shipped tokens and green LCD described below remain implementation history until an approved design replaces them. Small functional record/playhead color and exact palette/contrast rules remain to be agreed. See [Studio Figma brief](studio-figma-brief.md).
+
 ## 1. Direction
 
 FidgetBeatz is a **glowing instrument in a dark room**. The pads are the hero; everything else stays quiet.
