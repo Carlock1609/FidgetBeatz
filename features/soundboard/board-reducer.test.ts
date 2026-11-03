@@ -184,3 +184,15 @@ describe("boardReducer", () => {
     expect(arrayMove([1, 2, 3], 5, 0)).toEqual([1, 2, 3]);
   });
 });
+
+it("tracks pad volume as an editable customization, with save and cancel", () => {
+  const original = hydrated();
+  const padId = selectVisiblePads(original)[0]!.id;
+  const edited = run(original, { type: "enterEdit" }, { type: "setPadVolume", padId, volume: 0.4 });
+  expect(selectHasUnsavedChanges(edited)).toBe(true);
+  expect(selectVisiblePads(edited)[0]!.volume).toBe(0.4);
+  expect(selectVisiblePads(run(edited, { type: "cancelEdit" }))[0]!.volume).toBeUndefined();
+  const saved = run(edited, { type: "saveEdit" });
+  expect(selectVisiblePads(saved)[0]!.volume).toBe(0.4);
+  expect(selectIsCustomized(saved)).toBe(true);
+});

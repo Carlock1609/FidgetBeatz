@@ -32,7 +32,7 @@ describe("SoundboardApp", () => {
     expect(pads).toHaveLength(12);
 
     fireEvent.pointerDown(pads[0]!, { pointerType: "touch", button: 0 });
-    expect(play).toHaveBeenCalledWith("kick-punchy-01", { padIndex: 0 });
+    expect(play).toHaveBeenCalledWith("kick-punchy-01", { padIndex: 0, gain: 1 });
     expect(pads[0]).toHaveAttribute("data-hit");
 
     // Rapid repeats each trigger the engine.
@@ -48,7 +48,7 @@ describe("SoundboardApp", () => {
     fireEvent.pointerDown(pads[2]!, { pointerType: "mouse", button: 2 });
     expect(play).not.toHaveBeenCalled();
     fireEvent.keyDown(pads[2]!, { key: " " });
-    expect(play).toHaveBeenCalledWith("hihat-closed-01", { padIndex: 2 });
+    expect(play).toHaveBeenCalledWith("hihat-closed-01", { padIndex: 2, gain: 1 });
   });
 
   it("enters edit mode, adds a pad and saves it", async () => {

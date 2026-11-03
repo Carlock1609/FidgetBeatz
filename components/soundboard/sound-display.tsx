@@ -6,49 +6,32 @@ import { CATEGORY_META } from "@/data/sounds/categories";
 import { getSound } from "@/data/sounds/catalog";
 import { useBoardState } from "@/features/soundboard/board-provider";
 import { selectActiveProfile, selectVisiblePads } from "@/features/soundboard/board-reducer";
-import { useAudioContextState, useEngineEvents } from "@/hooks/use-audio-engine";
+import { useAudioContextState, useAudioEngine, useEngineEvents } from "@/hooks/use-audio-engine";
 import type { EngineEvent } from "@/lib/audio/audio-engine";
 import { cn } from "@/lib/utils/cn";
 
 const SEGMENTS = 24;
 
-/**
- * Trigger-driven level meter (docs/audio-system.md §9). Each hit jumps to 18–24 segments, then
- * decays exponentially (≈9 by 140 ms, ≈2–3 by 320 ms) in a rAF loop that writes to the DOM
- * directly and stops when idle. No AnalyserNode, nothing on the audio path.
- */
-export function useTriggerMeter(onFrame: (level: number) => void) {
-  const level = useRef(0);
-  const frame = useRef<number | null>(null);
-  const last = useRef(0);
-  const draw = useRef(onFrame);
+/** Samples the output at 30 fps, with fast attack and a short visual release. */
+export function useOutputMeter(onFrame: (level: number) => void) {
+  const engine = useAudioEngine();
   useEffect(() => {
-    draw.current = onFrame;
-  }, [onFrame]);
-
-  useEffect(
-    () => () => {
-      if (frame.current !== null) cancelAnimationFrame(frame.current);
-    },
-    [],
-  );
-
-  return useCallback(() => {
-    const step = (now: number) => {
-      const dt = (now - last.current) / 1000;
-      last.current = now;
-      level.current *= Math.exp(-dt / 0.165);
-      if (level.current < 0.5) level.current = 0;
-      draw.current(level.current);
-      frame.current = level.current > 0 ? requestAnimationFrame(step) : null;
+    let frame = 0;
+    let last = 0;
+    let level = 0;
+    const draw = (now: number) => {
+      if (now - last >= 1000 / 30) {
+        const elapsed = (now - last) / 1000;
+        last = now;
+        const peak = engine.getOutputLevel();
+        level = peak === 0 ? 0 : Math.max(peak, level * Math.exp(-elapsed / 0.165));
+        onFrame(level * SEGMENTS);
+      }
+      frame = requestAnimationFrame(draw);
     };
-    level.current = Math.max(level.current, 18 + Math.random() * 6);
-    draw.current(level.current);
-    if (frame.current === null) {
-      last.current = performance.now();
-      frame.current = requestAnimationFrame(step);
-    }
-  }, []);
+    frame = requestAnimationFrame(draw);
+    return () => cancelAnimationFrame(frame);
+  }, [engine, onFrame]);
 }
 
 /**
@@ -72,16 +55,12 @@ export function SoundDisplay({ className }: { className?: string }) {
       else el.removeAttribute("data-on");
     });
   }, []);
-  const kick = useTriggerMeter(draw);
+  useOutputMeter(draw);
 
-  const onEvent = useCallback(
-    (e: EngineEvent) => {
-      if (e.type !== "trigger") return;
-      setHit({ soundId: e.soundId, padIndex: e.padIndex });
-      kick();
-    },
-    [kick],
-  );
+  const onEvent = useCallback((e: EngineEvent) => {
+    if (e.type !== "trigger") return;
+    setHit({ soundId: e.soundId, padIndex: e.padIndex });
+  }, []);
   useEngineEvents(onEvent);
 
   // A new board starts idle again.
@@ -157,9 +136,7 @@ export function FocusLevelLine() {
   const draw = useCallback((level: number) => {
     if (bar.current) bar.current.style.transform = `scaleX(${Math.min(1, level / SEGMENTS)})`;
   }, []);
-  const kick = useTriggerMeter(draw);
-  const onEvent = useCallback((e: EngineEvent) => e.type === "trigger" && kick(), [kick]);
-  useEngineEvents(onEvent);
+  useOutputMeter(draw);
   return (
     <div className="pointer-events-none fixed inset-x-0 top-0 z-30 h-[3px]" aria-hidden>
       <div

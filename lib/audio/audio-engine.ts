@@ -5,7 +5,7 @@
  * AudioBufferSourceNode per hit. `play()` is synchronous so the tap path never waits on a
  * promise. Framework-free so it can be unit-tested with a fake context and reused by Phase 2.
  *
- * Graph: source → voiceGain(sound.gain × opts.gain) → masterGain → limiter → destination
+ * Graph: source → voiceGain(sound.gain × opts.gain) → masterGain → limiter → analyser → destination
  */
 import type { Sound, SoundId } from "@/types";
 
@@ -86,6 +86,8 @@ export class AudioEngine {
   private ctx: AudioContext | null = null;
   private decoder: BaseAudioContext | null | undefined;
   private master: GainNode | null = null;
+  private analyser: AnalyserNode | null = null;
+  private meterSamples: Float32Array<ArrayBuffer> | null = null;
   private unsupported = false;
   private masterVolume = 0.9;
 
@@ -188,6 +190,16 @@ export class AudioEngine {
     return () => this.listeners.delete(listener);
   }
 
+  /** Peak of the actual output waveform, after master volume and limiting (0–1). */
+  getOutputLevel(): number {
+    if (!this.isRunning || this.masterVolume === 0 || !this.analyser || !this.meterSamples)
+      return 0;
+    this.analyser.getFloatTimeDomainData(this.meterSamples);
+    let peak = 0;
+    for (const sample of this.meterSamples) peak = Math.max(peak, Math.abs(sample));
+    return Math.min(1, peak);
+  }
+
   /** Sets master volume (0–1), smoothed to avoid zipper noise. */
   setMasterVolume(volume: number): void {
     this.masterVolume = Math.min(1, Math.max(0, volume));
@@ -230,7 +242,11 @@ export class AudioEngine {
     limiter.ratio.value = 20;
     limiter.attack.value = 0.002;
     limiter.release.value = 0.1;
-    limiter.connect(ctx.destination);
+    this.analyser = ctx.createAnalyser();
+    this.analyser.fftSize = 2048;
+    this.meterSamples = new Float32Array(this.analyser.fftSize);
+    limiter.connect(this.analyser);
+    this.analyser.connect(ctx.destination);
 
     this.master = ctx.createGain();
     this.master.gain.value = this.masterVolume;

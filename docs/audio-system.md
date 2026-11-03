@@ -98,8 +98,8 @@ Nothing in the engine throws to the UI during play.
 ## 9. Sound display and level meter
 
 - The engine emits a `trigger` event `{ soundId, padIndex, time }` **after** `source.start()`. The LCD subscribes to it.
-- Phase 1 meter: **trigger-driven**, meaning each hit sets the meter to 18–24 segments, then it decays via CSS/rAF. No `AnalyserNode` is needed, which avoids extra audio-graph work on phones.
-- Optional later: a real level meter from an `AnalyserNode` on `masterGain`, sampled at ≤ 30 fps.
+- The LCD and focus line read a shared `AnalyserNode` after master gain and the limiter. Waveform peaks are sampled at up to 30 fps with a short visual release; muted or suspended audio reads zero. This is an output activity meter, not a calibrated loudness meter.
+- Edit → Pad volume balances individual pads from 0–200% (100% by default), including previews. Levels are saved per profile; master volume controls the entire mix. Older profiles without pad volume retain their original level.
 
 ## 10. Phase 2 hooks (don't build yet)
 

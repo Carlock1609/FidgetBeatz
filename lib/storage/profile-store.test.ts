@@ -22,6 +22,7 @@ describe("LocalProfileStore", () => {
     const state = createDefaultState();
     state.profiles[0]!.name = "Saved";
     state.settings.masterVolume = 0.4;
+    state.profiles[0]!.pads[0]!.volume = 0.35;
     expect(store.save(state)).toBe(true);
     const loaded = store.load();
     expect(loaded.issue).toBeNull();

@@ -87,9 +87,9 @@ export const PlayPad = memo(function PlayPad({ pad, index, hint, onRegister }: P
   const missing = useIsMissing(pad.soundId);
 
   const trigger = useCallback(() => {
-    if (pad.soundId) engine.play(pad.soundId, { padIndex: index });
+    if (pad.soundId) engine.play(pad.soundId, { padIndex: index, gain: pad.volume ?? 1 });
     flashPad(ref.current);
-  }, [engine, pad.soundId, index]);
+  }, [engine, pad.soundId, pad.volume, index]);
 
   useEffect(() => {
     onRegister(index, trigger);

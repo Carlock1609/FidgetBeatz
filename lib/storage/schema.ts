@@ -10,6 +10,7 @@ export const PadSchema = z.object({
   soundId: z.string().min(1).nullable(),
   label: z.string().max(LIMITS.padLabelMax),
   color: z.enum(PAD_COLORS),
+  volume: z.number().min(0).max(2).optional(),
 });
 
 export const ColumnsSchema = z.object({

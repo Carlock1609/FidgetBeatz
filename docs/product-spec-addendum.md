@@ -15,7 +15,7 @@ This addendum records requirements added after the original spec (`product-spec.
 
 - A recessed panel between the profile row and the preset chips.
 - It shows: preset name, pad position (`PAD 05/12`), the last sound played (large, caps), a category dot in the pad's color, and a 24-segment level meter.
-- The meter jumps on each hit and decays over about 300 ms. Idle state: `TAP A PAD` / `READY`.
+- The meter follows actual output waveform peaks after master volume and limiting, with a short visual release. Idle state: `TAP A PAD` / `READY`.
 - The display must never delay audio: it updates after `source.start()`, not before.
 
 ## A3. Focus mode — Phase 1

@@ -64,6 +64,8 @@ export interface Pad {
   /** 0–16 characters; shown on the pad. */
   label: string;
   color: PadColor;
+  /** Per-pad volume, 0–2. Missing values play at 100%. */
+  volume?: number;
 }
 
 /** Responsive column hint for the grid. */

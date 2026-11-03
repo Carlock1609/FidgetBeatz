@@ -58,6 +58,7 @@ export type BoardAction =
   | { type: "movePad"; from: number; to: number }
   | { type: "assignSound"; padId: PadId; soundId: SoundId | null }
   | { type: "relabelPad"; padId: PadId; label: string }
+  | { type: "setPadVolume"; padId: PadId; volume: number }
   | { type: "recolorPad"; padId: PadId; color: PadColor }
   | { type: "updateSettings"; settings: Partial<Settings> };
 
@@ -246,6 +247,13 @@ export function boardReducer(state: BoardState, action: BoardAction): BoardState
         label: action.label.slice(0, LIMITS.padLabelMax),
       }));
 
+    case "setPadVolume":
+      if (!Number.isFinite(action.volume)) return state;
+      return updateDraftPad(state, action.padId, (pad) => ({
+        ...pad,
+        volume: Math.min(2, Math.max(0, action.volume)),
+      }));
+
     case "recolorPad":
       return updateDraftPad(state, action.padId, (pad) => ({ ...pad, color: action.color }));
 
@@ -295,7 +303,8 @@ function samePads(a: readonly Pad[], b: readonly Pad[], compareIds: boolean): bo
         (!compareIds || pad.id === other.id) &&
         pad.soundId === other.soundId &&
         pad.label === other.label &&
-        pad.color === other.color
+        pad.color === other.color &&
+        (pad.volume ?? 1) === (other.volume ?? 1)
       );
     })
   );
