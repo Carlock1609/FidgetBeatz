@@ -42,6 +42,8 @@ Check: open the URL, tap a few pads, and open the version chip. It should show `
 
 ### 2. Deploy the stats Worker
 
+**First-time Cloudflare prerequisite:** after `wrangler login`, open Workers & Pages in the account dashboard and complete the initial Workers setup. Cloudflare requires an account-level workers.dev subdomain even when this Worker sets `workers_dev: false` and serves only its custom domain. Without initialization, deploy fails with API error 10063.
+
 Full details are in [services/stats-counter/README.md](../services/stats-counter/README.md#deploy). In short:
 
 1. `services/stats-counter/wrangler.jsonc` already has what production needs: the `stats.fidgetbeatz.com` custom domain route (no `workers.dev` URL) and `ALLOWED_ORIGINS` set to `https://fidgetbeatz.com,https://www.fidgetbeatz.com`. Change them only if the domain changes. Don't create a `stats` DNS record by hand; the deploy does it.
@@ -87,3 +89,13 @@ Tick the deployment items in [roadmap.md](roadmap.md), and update the status lin
 
 - **Worker deploys from CI.** It would need a Cloudflare API token stored as a GitHub secret, for a service that changes rarely. Revisit if it starts changing often.
 - **Lighthouse or bundle-size checks.** Not needed yet for Phase 1.
+
+## Deployment validation — 2026-11-02
+
+- Main site HTTPS 200 and www → apex 308 confirmed.
+- Vercel project `fidgetbeatz` exists under `carlock-enterprise-s`; production uses Node 26.x (repository/CI pins Node 24). No runtime setting changed in this task.
+- Vercel production had no environment variables configured during inspection; stats connection still required.
+- Cloudflare login completed, but first deployment failed with API error 10063: account Workers setup required. No successful Worker deployment is claimed yet.
+- GitHub rulesets list was empty; classic branch-protection inspection returned 403 through the connector, and local `gh` was unauthenticated. Required-check enforcement remains unverified.
+
+After deploying and connecting stats, run `node scripts/check-deployment.mjs`. It checks HTTPS, www redirect, heartbeat counts, production CORS, localhost rejection and the stats endpoint baked into frontend scripts. It never calls `/visit`; its synthetic heartbeat briefly contributes to “jamming now.” Script success does not verify branch protection or browser rendering of footer numbers.
