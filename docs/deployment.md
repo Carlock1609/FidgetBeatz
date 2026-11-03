@@ -1,6 +1,6 @@
 # Deployment
 
-> **Status (2026-10-31):** the app is live at **https://fidgetbeatz.com** on Vercel (step 1 done; `www` redirects to it). CI and Dependabot are running. **Still to do:** deploy the stats Worker at `stats.fidgetbeatz.com` (step 2; the config is ready), connect it (step 3) and protect `main` (step 4). Tick them off in [roadmap.md](roadmap.md) as they're done.
+> **Status (2026-11-02):** app live on Vercel; stats Worker deployed at `stats.fidgetbeatz.com`; Production `NEXT_PUBLIC_STATS_URL` configured and existing production source rebuilt; live numeric footer verified in a mobile browser. Active main ruleset requires PRs and all three CI checks and blocks force pushes/deletion. See verification notes below for this machine’s DNS-cache limitation.
 
 How FidgetBeatz gets from a commit to the web, following [ADR 0009](decisions/0009-hosting-vercel-and-cloudflare.md).
 
@@ -48,6 +48,8 @@ Check: open the URL, tap a few pads, and open the version chip. It should show `
 
 ### 2. Deploy the stats Worker
 
+**First-time Cloudflare prerequisite:** after `wrangler login`, open Workers & Pages in the account dashboard and complete the initial Workers setup. Cloudflare requires an account-level workers.dev subdomain even when this Worker sets `workers_dev: false` and serves only its custom domain. Without initialization, deploy fails with API error 10063.
+
 Full details are in [services/stats-counter/README.md](../services/stats-counter/README.md#deploy). In short:
 
 1. `services/stats-counter/wrangler.jsonc` already has what production needs: the `stats.fidgetbeatz.com` custom domain route (no `workers.dev` URL) and `ALLOWED_ORIGINS` set to `https://fidgetbeatz.com,https://www.fidgetbeatz.com`. Change them only if the domain changes. Don't create a `stats` DNS record by hand; the deploy does it.
@@ -93,3 +95,14 @@ Tick the deployment items in [roadmap.md](roadmap.md), and update the status lin
 
 - **Worker deploys from CI.** It would need a Cloudflare API token stored as a GitHub secret, for a service that changes rarely. Revisit if it starts changing often.
 - **Lighthouse or bundle-size checks.** Not needed yet for Phase 1.
+
+## Deployment validation — 2026-11-02
+
+- Main site HTTPS 200 and www → apex 308 confirmed.
+- Vercel project `fidgetbeatz` under `carlock-enterprise-s` uses Node 26.x (repository/CI pins Node 24). No runtime setting changed in this task.
+- Cloudflare Worker deployed successfully: version `a29d3ec5-d12c-49ae-895b-3d755cb81afa`, custom domain `stats.fidgetbeatz.com`. Initial account error 10063 was resolved by opening Workers & Pages; no separate application needed creation.
+- Added public Production `NEXT_PUBLIC_STATS_URL=https://stats.fidgetbeatz.com`. Rebuilt the existing main production deployment, now `https://fidgetbeatz-2igtdh6f9-carlock-enterprise-s.vercel.app`, aliased to the production domains. No unmerged branch was deployed.
+- Cloudflare HTTPS DNS resolver returned the new A records. This machine's normal lookup still returned ENOTFOUND during verification. With the verified public IP mapped to the hostname (TLS verification retained), heartbeat returned 200 with numeric counts and production CORS; localhost returned 403. Mobile Chromium displayed **1 jamming now / 1 visits** after loading.
+- GitHub ruleset [Protect Main](https://github.com/Carlock1609/FidgetBeatz/rules/26414881), ID 26414881, independently read through the API: active on the default branch, no bypass actors, PR required with zero reviewer approvals, all three GitHub Actions checks required, force pushes and deletion blocked.
+
+Run `node scripts/check-deployment.mjs` after deployment. It checks HTTPS, www redirect, heartbeat counts, production CORS, localhost rejection and the stats endpoint baked into frontend scripts. It never calls `/visit`; its synthetic heartbeat briefly contributes to “jamming now.” The normal-DNS script run remained blocked by ENOTFOUND locally, so a full script pass is not claimed. Separate mapped-host checks and the live browser confirmed the service and footer. Script success alone does not verify branch protection or browser rendering.

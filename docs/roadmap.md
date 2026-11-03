@@ -47,7 +47,7 @@
 ### Stage 6 — Profiles and stats
 
 - [x] 5 profiles, persistence, validation, migrations, recovery
-- [ ] **6b:** stats provider chosen and recorded in ADR 0006; `lib/stats` client; visitors-now heartbeat; page-visit counter — client done and unit-tested; provider chosen (Cloudflare Workers Free + Durable Object) and `services/stats-counter/` built, unit-tested and checked locally against the app; **not deployed yet**
+- [x] **6b:** Cloudflare Worker + Durable Object deployed at `stats.fidgetbeatz.com`; Vercel Production URL set and rebuilt; numeric live footer and CORS verified 2026-11-02 (deployment notes record local DNS caching).
 - [x] Stats offline state; E2E with the stats endpoint blocked
 - [x] Version sheet (version, build date, what's new)
 
@@ -64,8 +64,8 @@
 - [ ] Summary of shipped features and known limitations
 - [x] CI and dependency updates: GitHub Actions (lint, format, typecheck, unit, stats service, build, E2E) and Dependabot, Node pinned to 24 (ADR 0009) — all three jobs passed on `main` (458ee25) on 2026-10-31, and Dependabot is opening PRs
 - [x] App imported into Vercel and live at https://fidgetbeatz.com, `www` redirecting to it ([deployment.md](deployment.md) step 1) — checked 2026-10-31: 200 over HTTPS, `www` returns 308
-- [ ] Stats Worker deployed at `stats.fidgetbeatz.com` (config ready), `NEXT_PUBLIC_STATS_URL` set in Vercel, footer shows live numbers (steps 2–3)
-- [ ] `main` protected by required CI checks (step 4)
+- [x] Stats Worker deployed at `stats.fidgetbeatz.com`, `NEXT_PUBLIC_STATS_URL` set in Vercel, footer shows live numbers — verified 2026-11-02 (steps 2–3)
+- [x] `main` protected by active ruleset 26414881: PR and all three CI checks required, force pushes/deletion blocked — API verified 2026-11-02 (step 4)
 
 ## Phase 1 definition of done
 

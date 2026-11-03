@@ -69,3 +69,9 @@ Checked 2026-10-19; details and sources are in ADR 0006. Each browser request co
 - 13,000 GB-s of Durable Object duration per day. One object kept awake all day uses about 11,000 GB-s at 128 MB.
 
 When a limit runs out, requests fail until 00:00 UTC. The footer then shows its offline state and retries with backoff. The soundboard is unaffected.
+
+### First-time account setup
+
+Cloudflare may require the account's Workers & Pages onboarding before the first deploy, even with `workers_dev: false`. API error 10063 means open Workers & Pages in the Cloudflare dashboard and initialize its account subdomain, then retry deployment. This does not enable this Worker's workers.dev endpoint; it stays at `stats.fidgetbeatz.com`.
+
+After connecting the Vercel frontend, run `node scripts/check-deployment.mjs` from the repository root for the end-to-end deployment smoke check.

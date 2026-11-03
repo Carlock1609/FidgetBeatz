@@ -1,6 +1,6 @@
 # 0009 — Hosting on Vercel, stats on Cloudflare, CI on GitHub Actions
 
-- **Status:** Accepted (not deployed yet; see [deployment.md](../deployment.md))
+- **Status:** Accepted (app and stats deployed, main protected; verified 2026-11-02 in [deployment.md](../deployment.md))
 - **Date:** 2026-10-31
 
 ## Context

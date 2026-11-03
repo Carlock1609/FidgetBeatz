@@ -4,7 +4,7 @@
 
 FidgetBeatz is a mobile-first, browser-based beat-making playground. Tap colorful sound pads, mix overlapping sounds, switch between curated presets, and save up to five personal soundboards — no account, no install, no musical experience required.
 
-> **Project status:** Phase 1 implemented (v0.1.0, 2026-10-18). Every script in the table below has been run. Still open: real-device audio testing (iOS Safari / Android Chrome), deploying the stats Worker (the app is live at https://fidgetbeatz.com; steps in [docs/deployment.md](docs/deployment.md)), and the Figma pass — see [docs/roadmap.md](docs/roadmap.md).
+> **Project status:** Phase 1 implemented (v0.1.0, 2026-10-18). Every script in the table below has been run. App and stats are live with protected main (verification in [docs/deployment.md](docs/deployment.md)). Still open: remaining real-device validation and design references — see [docs/roadmap.md](docs/roadmap.md).
 
 ---
 
