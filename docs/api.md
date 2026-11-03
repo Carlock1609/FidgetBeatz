@@ -1,6 +1,6 @@
 # Stats endpoint contract
 
-> **Status:** the client (`lib/stats/stats-client.ts`) and the server (`services/stats-counter/`, a Cloudflare Worker + Durable Object, ADR 0006) are both implemented and unit-tested. **The server is not deployed yet**, so with `NEXT_PUBLIC_STATS_URL` empty the footer shows the offline state. The app itself has no API routes.
+> **Status (2026-11-02):** client and Cloudflare Worker + Durable Object implemented and tested. Worker live at `https://stats.fidgetbeatz.com`; Vercel Production configured and rebuilt; numeric live footer verified. The app itself has no API routes. See [deployment verification](deployment.md#deployment-validation--2026-11-02).
 
 The visitor counter is an external service (ADR 0006). The reference implementation is `services/stats-counter/`; its README covers local dev and deployment. Any other service that implements the contract below would also work.
 

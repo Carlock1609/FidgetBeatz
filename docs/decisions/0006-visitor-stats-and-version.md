@@ -1,6 +1,6 @@
 # 0006 — Live visitor stats via an external counter; version from build
 
-- **Status:** Accepted. Provider chosen 2026-10-19: **Cloudflare Workers Free plan + one SQLite-backed Durable Object**, in `services/stats-counter/`. The service is built and unit-tested but **not deployed yet**; until `NEXT_PUBLIC_STATS_URL` is set, the footer shows the offline state.
+- **Status:** Accepted. Provider chosen 2026-10-19: **Cloudflare Workers Free plan + one SQLite-backed Durable Object**, in `services/stats-counter/`. Deployed at `stats.fidgetbeatz.com` on 2026-11-02; Vercel Production configured and rebuilt, with numeric live footer verified (see deployment notes).
 - **Date:** 2026-10-18
 - **Amends:** ADR 0002 (no backend in Phase 1)
 
