@@ -81,3 +81,7 @@ The initial 30-layer and 60-second caps must be configurable release defaults. B
 - Studio recording focus must retain essential recording state and controls; its precise relationship to existing pad-only focus mode needs design agreement.
 - Phase 4 is custom sounds: record microphone audio, store it, optionally import audio, and reuse sounds on pads/in Studio. Discover permission, storage, dependency recovery and licensing behavior before implementation. Cloud/account sync is not implied.
 - Phase order is Studio (2), accounts/community (3), custom sounds (4), then guided play when scheduled. Custom sounds must precede guided play.
+
+### A8 navigation confirmation
+
+The owner approved the Pads ↔ expanded layer timeline flow: Pads focuses on a specific selected layer; “Expand layer timeline” shows all layers; selecting a layer and choosing “Return to pads” focuses that layer for further work. Selection/view switching is non-destructive and does not start recording. Adding hits versus replacing an existing take remains to be decided; individual-hit and clip editing remain deferred. Exact Figma layout and recording-interruption behavior still need review.

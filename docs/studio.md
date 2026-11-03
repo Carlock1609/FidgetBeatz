@@ -38,7 +38,7 @@ The initial 30-layer and 60-second limits are release defaults, not permanent ar
 ## Decisions still open
 
 1. Define duration-input precision/minimum, whether established duration can be changed in the first release, and playhead positioning for recording a late accent.
-2. Mobile layout: how do users reach pads, timeline and layer controls without crowding the screen? Compare references before selecting a layout; tabs, sheets and collapsible areas are candidates, not decisions.
+2. Pads ↔ expanded timeline navigation is agreed. Resolve exact mobile proportions, expansion treatment and landscape layout in Figma.
 3. Define local recovery limits, clearing a project, navigation warnings and recovery failure behavior.
 4. Define end-of-song audio tails, export volume and clipping, and interrupted/background recording behavior.
 5. Define minimum controls for the first release and verify recording/export performance on real phones.
@@ -49,9 +49,11 @@ Requested direction: mostly black, white and neutral grays. Keep expressive colo
 
 The supplied Ableton Note screenshot is inspiration for a compact event strip immediately above playable pads and visible hit feedback. It does not establish a complete multilayer layout and should not be copied wholesale.
 
-Proposed flow for review, not approved implementation:
+Accepted navigation, with remaining presentation details for Figma review:
 
-- One Studio workspace with two complementary views: Record (pads first) and Layers (expanded timeline). Navigation preserves the same project, playhead, playback and armed layer.
+- One Studio workspace with two complementary views: Pads (focused on one selected layer) and Layers (expanded timeline of all layers). Use explicit “Expand layer timeline” and “Return to pads” actions. Switching views alone preserves the project, playhead and playback; selection is distinct from arming a recording.
+- In Layers, selecting a row sets the layer that Pads will focus on when the user chooses “Return to pads”. Show its name and existing hits clearly. Selecting or navigating never erases events, records hits or replaces a take.
+- Returning to Pads is the entry point for working on that layer. Supported initial controls remain mute, volume, delete and re-record. Whether recording an existing layer adds hits (overdub), replaces the take, or offers both is still an explicit product decision. Existing individual-hit movement/deletion and clip editing remain deferred.
 - Record view dedicates a compact top region to Play/Stop/Record, elapsed/project time, selected/armed layer and its event overview. Pads retain most of the remaining space.
 - A clearly labeled Layers/Expand action opens an expanded timeline view with aligned layer rows and one shared time ruler/playhead. Avoid a dropdown menu for inspecting 30–60 temporal rows. Compare an expanding panel against a full-height view in Figma before deciding.
 - Use discrete hit markers at actual trigger times rather than a filled 60-second block or fabricated waveform. A layer with one hit at second 16 stays mostly empty; show the hit position and a readable summary such as “1 hit · 0:16”. Sound tails may outlast a trigger; any tail rendering must be visually distinct and based on actual audio duration.

@@ -10,10 +10,10 @@ Visual direction: primarily black, white and neutral grays. Reserve expressive c
 
 The supplied Ableton Note screenshot is a reference for a thin event strip above a large pad grid and visible pad-hit feedback. Keep FidgetBeatz's identity; do not copy Ableton's entire screen or add its effect knobs. Those knobs are outside our initial scope.
 
-Design one persistent Studio workspace with two complementary views:
+The owner has approved one persistent Studio workspace with two complementary views and explicit “Expand layer timeline” / “Return to pads” navigation. Preserve this navigation in layout alternatives:
 
-1. Record: compact top transport with Play/Stop/Record, elapsed/project time, selected/armed layer and a readable event strip; large pads below. Include an obvious Layers/Expand action. Compare a selected-layer strip with a small stacked overview, without squeezing 30 rows above the pads.
-2. Layers: expanded timeline with one shared time ruler and playhead across layer rows. Layer names/controls remain readable while scrolling. Selecting a row offers its pad-event breakdown and mute, volume, delete/re-record actions. Include a prominent return to pads. Compare a full-height view against an expanding panel; explain the space tradeoff through the frames.
+1. Record: compact top transport with Play/Stop/Record, elapsed/project time, selected/armed layer and a readable event strip; large pads below. Focus on one selected layer, clearly showing its name and existing hits. Include an obvious “Expand layer timeline” action. Compare a selected-layer strip with a small stacked overview, without squeezing 30 rows above the pads.
+2. Layers: expanded timeline with one shared time ruler and playhead across layer rows. Layer names/controls remain readable while scrolling. Selecting a row offers its pad-event breakdown and mute, volume, delete/re-record actions. Selecting a layer determines which layer is shown after “Return to pads”; include that prominently labeled action. Selection/navigation must never erase existing hits or implicitly start/replace recording. Compare a full-height view against an expanding panel; explain the space tradeoff through the frames.
 3. Recording focus: reduce nonessential chrome and maximize pads while retaining Stop/Record, elapsed time, armed-layer state and exit. Keep existing soundboard pad-only focus as a separate context; show the distinction.
 
 All layers share a project loop longer than zero and up to 60 seconds initially. Users can set a duration before recording, or Stop on the first take establishes it. Later takes may stop early without changing project duration. Existing layers play during a new take. Show separate selected and armed states if those differ; entering Layers or selecting a row must not accidentally arm or replace a recording. Define or annotate whether arming while recording is disabled.
@@ -30,7 +30,8 @@ Deliver reusable components/tokens, named interaction states, and two layout alt
 
 ## Questions to resolve during review
 
-- Selected-layer strip versus small multilayer overview while playing pads?
+- Pads focuses on the selected layer; decide whether an additional small overall summary is useful without distracting from it.
+- When returning to an existing layer, does Record add hits, replace the take after confirmation, or expose both choices? This is not decided yet; do not invent drag-to-edit or individual-note editing.
 - Full-height Layers view versus expanding panel on phone; what changes in landscape?
 - Functional red playhead/record state versus a fully neutral chrome treatment?
 - How can users inspect or record a hit late in a long loop without waiting through the whole loop? Seeking and recording-start rules still need agreement.
